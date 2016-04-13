@@ -45,8 +45,8 @@ class PagesController extends AppController {
  *	or MissingViewException in debug mode.
  */
 	public function display() 
-	{		
-		$arrayReturn = array('success'=>true, 'MENSAGEM'=>'Retornado com sucesso', 'dados'=>array(), 'token'=>md5('admin'));
+	{			
+		$arrayReturn = array('success'=>true, 'mensagem'=>'Retornado com sucesso', 'dados'=>array(), 'token'=>md5('admin'));
 		echo base64_encode(json_encode($arrayReturn, 1));
 		exit;	
 	}
