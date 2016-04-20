@@ -1,34 +1,81 @@
 <?php
-/**
- * Application level Controller
- *
- * This file is application-wide controller file. You can put all
- * application-wide controller-related methods here.
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Controller
- * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
 
 App::uses('Controller', 'Controller');
 
 /**
  * Application Controller
  *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
- * @package		app.Controller
- * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
+ * @package		app.Controller 
  */
-class AppController extends Controller {
+class AppController extends Controller 
+{
+
+	public $Return 		= true;
+	public $Message 	= '';
+	public $TypeToken 	= 'bd';
+	public $ArrayReturn = array();
+
+	public function beforeFilter() 
+	{
+    	parent::beforeFilter();    	    	
+
+    	if(!$this->modelClass == 'CakeError')
+    	{
+    		$this->Return = false;
+    		$this->Message = 'Requisição inválida';
+    		$this->EncodeReturn();
+    	}
+
+    	if(!$this->ValidToken())
+    	{
+    		$this->Return = false;    		
+    		$this->EncodeReturn();	
+    	}
+	}
+
+	##valida token informado do banco de dados pelo client e token gerado dinamicamente pela API
+	public function ValidToken()
+	{	
+		$this->loadModel('Cliente');						
+
+		if($this->TypeToken == 'bd')
+		{
+			if(empty($this->request->data['token']))
+			{
+				$this->Message = 'Informar token de Requisição';
+				$this->Return = false;
+				$this->EncodeReturn();
+			}				
+
+			if(!$this->Cliente->FindToken($this->request->data['token']))
+			{			
+				$this->Message = $this->Cliente->Message;
+				$this->Return = false;	
+				$this->EncodeReturn();
+			}				
+			
+			
+			$this->Message = $this->Cliente->Message;
+			$this->Return = true;
+			##chamar funcao para gerar token de utilizacao
+
+			$this->EncodeReturn();			
+		}
+		else
+		{
+
+			echo "validar aqui token da API";exit;
+		}			
+	}
+
+	##trata dados para retorno de api
+	public function EncodeReturn()
+	{	
+		$Array = array('message'=>$this->Message, 'success'=>$this->Return);
+		$Json = json_encode($Array);
+		echo $Json;
+		exit;
+	}
+
+
 }
