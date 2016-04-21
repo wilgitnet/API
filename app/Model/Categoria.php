@@ -6,7 +6,7 @@ App::uses('AppModel', 'Model');
  * @property Cliente $Cliente
  * @property Situacao $Situacao
  */
-class Class extends AppModel {
+class Categoria extends AppModel {
 
 /**
  * Validation rules

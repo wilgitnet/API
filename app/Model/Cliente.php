@@ -8,14 +8,15 @@ App::uses('AppModel', 'Model');
  * @property Situacao $Situacao
  * @property Class $Class
  */
-class Cliente extends AppModel {
+class Cliente extends AppModel 
+{
 
 /**
  * Validation rules
  *
  * @var array
  */
-
+	public $useTable = 'clientes';
 	public $name = 'Cliente';
 	public $ResultQuery = '';
 
@@ -288,8 +289,8 @@ class Cliente extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'Class' => array(
-			'className' => 'Class',
+		'Categoria' => array(
+			'className' => 'Categoria',
 			'foreignKey' => 'cliente_id',
 			'dependent' => false,
 			'conditions' => '',
@@ -302,4 +303,5 @@ class Cliente extends AppModel {
 			'counterQuery' => ''
 		)
 	);
+
 }

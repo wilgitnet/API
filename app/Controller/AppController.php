@@ -10,11 +10,13 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller 
 {
 
-	public $Return 		  = true;
-	public $Message 	  = '';
-	public $TypeToken 	  = 'bd';
-	public $ArrayReturn   = array();
-	public $TokenRequest  = '';
+	public $Return 		  	= true;
+	private $RequestReturn 	= true;
+	public $Message 	  	= '';
+	public $TypeToken 	  	= 'bd';
+	public $ArrayReturn   	= array();
+	public $TokenRequest  	= '';
+	public $DadosArray 		= array();
 
 	public function beforeFilter() 
 	{
@@ -22,16 +24,18 @@ class AppController extends Controller
 
     	if(!$this->ValidToken())
     	{
-    		$this->Return = false;    		
+    		$this->RequestReturn = false;    		
     		$this->EncodeReturn();	
     	}
 
+    	/*
     	if($this->modelClass == 'CakeError')
     	{
-    		$this->Return = false;
+    		$this->RequestReturn = false;
     		$this->Message = 'Requisição inválida';
     		$this->EncodeReturn();
     	}
+    	*/
 	}
 
 	##valida token informado e gerado dinamicamente pela API
@@ -66,7 +70,7 @@ class AppController extends Controller
 	##trata dados para retorno de api
 	public function EncodeReturn()
 	{	
-		$Array = array('message'=>$this->Message, 'success'=>$this->Return);
+		$Array = array('message'=>$this->Message, 'success'=>$this->Return, 'request'=>$this->RequestReturn, 'dados'=>$this->DadosArray);
 		$Json = json_encode($Array);
 		echo $Json;
 		exit;

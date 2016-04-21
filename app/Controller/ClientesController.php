@@ -26,9 +26,16 @@ class ClientesController extends AppController {
 	}
 
 
-	public function home()
+	public function find_dominio()
 	{
-		echo "estamos aqui";exit;
+		##realizar aqui busca por cliente
+		$this->DadosArray = $this->Cliente->find('first', array(
+		    'conditions' => array(		        
+		        'dominio' => $this->request->data['dominio']
+		    )		    
+		));		
+		$this->EncodeReturn();
+		exit;
 	}
 
 

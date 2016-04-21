@@ -25,6 +25,12 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
+	
+
+	##rotas de cliente
+	Router::connect('/cliente/buscar', array('controller' => 'clientes', 'action' => 'find_dominio'));
+
+
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	Router::connect('/pizzas/listar', array('controller' => 'produtos', 'action' => 'listing'));
 /**
