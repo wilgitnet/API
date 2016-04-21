@@ -10,62 +10,57 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller 
 {
 
-	public $Return 		= true;
-	public $Message 	= '';
-	public $TypeToken 	= 'bd';
-	public $ArrayReturn = array();
+	public $Return 		  = true;
+	public $Message 	  = '';
+	public $TypeToken 	  = 'bd';
+	public $ArrayReturn   = array();
+	public $TokenRequest  = '';
 
 	public function beforeFilter() 
 	{
-    	parent::beforeFilter();    	    	
-
-    	if(!$this->modelClass == 'CakeError')
-    	{
-    		$this->Return = false;
-    		$this->Message = 'Requisição inválida';
-    		$this->EncodeReturn();
-    	}
+    	parent::beforeFilter();    	    	    
 
     	if(!$this->ValidToken())
     	{
     		$this->Return = false;    		
     		$this->EncodeReturn();	
     	}
+
+    	if($this->modelClass == 'CakeError')
+    	{
+    		$this->Return = false;
+    		$this->Message = 'Requisição inválida';
+    		$this->EncodeReturn();
+    	}
 	}
 
-	##valida token informado do banco de dados pelo client e token gerado dinamicamente pela API
-	public function ValidToken()
-	{	
-		$this->loadModel('Cliente');						
-
-		if($this->TypeToken == 'bd')
+	##valida token informado e gerado dinamicamente pela API
+	private function ValidToken()
+	{															
+		if(!empty($this->request->data['TokenRequest']) || !empty($this->TokenRequest))
 		{
-			if(empty($this->request->data['token']))
+			$this->TokenRequest = $this->request->data['TokenRequest'];
+			$Valid1 			= substr($this->TokenRequest, 15, 1);
+			$Valid2 			= substr($this->TokenRequest, 31, 1);
+			$h 					= substr($this->TokenRequest, 42, 2);
+			$Valid3				= substr($this->TokenRequest, 44, 1);
+			$i					= substr($this->TokenRequest, 52, 2);
+			$s					= substr($this->TokenRequest, 59, 2);
+			$data 				= date('Y/m/d');
+			$dataTime			= strtotime(date('Y/m/d h:i:s'));
+			$dataRequest 		= strtotime($data.' '.$h.':'.$i.':'.$s);
+			$Diff				= $dataTime - $dataRequest;
+			
+			if($Valid1 == 'C' && $Valid2 == 'C' && $Valid3 == 'B' && $Diff < 20)
 			{
-				$this->Message = 'Informar token de Requisição';
-				$this->Return = false;
-				$this->EncodeReturn();
-			}				
-
-			if(!$this->Cliente->FindToken($this->request->data['token']))
-			{			
-				$this->Message = $this->Cliente->Message;
-				$this->Return = false;	
-				$this->EncodeReturn();
-			}				
-			
-			
-			$this->Message = $this->Cliente->Message;
-			$this->Return = true;
-			##chamar funcao para gerar token de utilizacao
-
-			$this->EncodeReturn();			
-		}
-		else
-		{
-
-			echo "validar aqui token da API";exit;
-		}			
+				return true;
+			}
+			else
+			{
+				$this->Message = 'Token inválido';
+				return false;
+			}								
+		}						
 	}
 
 	##trata dados para retorno de api
@@ -77,5 +72,63 @@ class AppController extends Controller
 		exit;
 	}
 
+	##gera token de seguranca para requisicao na API
+	private function GenerateToken()
+	{
+		$caracteres = '';		
+		$lmai = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$num = '1234567890';		
+		$caracteres .= $lmai;
+		$caracteres .= $num;
+		
+		$len = strlen($caracteres);					
+		for ($i=0; $i < 15; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+		
+		$this->TokenRequest .= 'C';
 
+		for ($i=0; $i < 15; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+
+		$this->TokenRequest .= 'C';
+
+		for ($i=0; $i < 10; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+
+		$this->TokenRequest .= date('h');
+		$this->TokenRequest .= 'B';
+
+		for ($i=0; $i < 7; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+
+		$this->TokenRequest .= date('i');
+
+		for ($i=0; $i < 5; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+
+		$this->TokenRequest .= date('s');
+
+		for ($i=0; $i < 2; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$this->TokenRequest .= $caracteres[$rand-1];
+		}
+		
+		return true;
+	}
 }

@@ -252,7 +252,6 @@ class Cliente extends AppModel {
 		),
 	);
 
-	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
  * belongsTo associations
@@ -303,20 +302,4 @@ class Cliente extends AppModel {
 			'counterQuery' => ''
 		)
 	);
-
-
-	public function FindToken($token)
-	{
-
-		$this->ResultQuery = $this->query(sprintf("select * FROM clientes WHERE token = '%s'", $token));
-		if(!empty($this->ResultQuery[0]['clientes']['token']))
-		{		
-			$this->Message = 'Token Encontrado';
-			$this->token = $this->ResultQuery[0]['clientes']['token'];
-			return true;
-		}
-
-		$this->Message = 'Token inválido';
-		return false;
-	}
 }
