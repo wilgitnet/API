@@ -17,6 +17,7 @@ class AppController extends Controller
 	public $ArrayReturn   	= array();
 	public $TokenRequest  	= '';
 	public $DadosArray 		= array();
+	public $SituacaoOK 		= 1;
 
 	public function beforeFilter() 
 	{

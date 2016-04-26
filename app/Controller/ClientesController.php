@@ -25,7 +25,7 @@ class ClientesController extends AppController {
 		$this->set('clientes', $this->Paginator->paginate());
 	}
 
-
+	##buscando dados a partir de dominio
 	public function find_dominio()
 	{
 		##realizar aqui busca por cliente
@@ -34,6 +34,30 @@ class ClientesController extends AppController {
 		        'dominio' => $this->request->data['dominio']
 		    )		    
 		));		
+		$this->EncodeReturn();
+		exit;
+	}
+
+
+	##buscando dados de cliente
+	public function find()
+	{			
+		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
+		$this->Cliente->unbindModel(array('hasMany' => array('Categoria')));		
+
+		##realizar aqui busca por cliente
+		$this->DadosArray = $this->Cliente->find('first', array(
+		    'conditions' => array(		        
+		        'Cliente.id' => $this->request->data['id_cliente'],
+		        'Cliente.situacao_id' => $this->SituacaoOK        
+		    )		    
+		));		
+		
+		if(empty($this->DadosArray['Cliente']['id']))
+		{
+			$this->Return = false;
+		}
+
 		$this->EncodeReturn();
 		exit;
 	}
