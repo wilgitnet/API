@@ -42,6 +42,12 @@ class ClientesController extends AppController {
 	##buscando dados de cliente
 	public function find()
 	{			
+		if(empty($this->request->data['id_cliente']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar id do cliente';
+		}
+
 		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
 		$this->Cliente->unbindModel(array('hasMany' => array('Categoria')));		
 
@@ -55,7 +61,36 @@ class ClientesController extends AppController {
 		
 		if(empty($this->DadosArray['Cliente']['id']))
 		{
+			$this->Message = 'Cliente não encontrado';
 			$this->Return = false;
+		}
+
+		$this->EncodeReturn();
+		exit;
+	}
+
+	##funcao para buscar cep
+	public function find_cep()
+	{
+		if(empty($this->request->data['cep']))
+		{
+			$this->Message = 'Informar cep para ser consultado';
+			$this->Return = false;
+		}
+
+		$reg = simplexml_load_file("http://cep.republicavirtual.com.br/web_cep.php?formato=xml&cep=" . $this->request->data['cep']);
+ 		
+		if(empty($reg->cidade))
+		{
+			$this->Message = 'CEP não encontrado';
+			$this->Return = false;
+		}
+		else
+		{
+			$this->DadosArray['uf'] = $reg->uf;
+			$this->DadosArray['cidade'] = $reg->cidade;
+			$this->DadosArray['bairro'] = $reg->bairro;
+			$this->DadosArray['logradouro'] = $reg->tipo_logradouro . ' ' . $reg->logradouro;
 		}
 
 		$this->EncodeReturn();
