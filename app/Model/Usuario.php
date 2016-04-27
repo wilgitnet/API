@@ -23,7 +23,17 @@ class Usuario extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'complemento' => array(
+		'sobrenome' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),		
+		'senha' => array(
 			'notBlank' => array(
 				'rule' => array('notBlank'),
 				//'message' => 'Your custom message here',
@@ -33,10 +43,40 @@ class Usuario extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'img' => array(
+		'usuario' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
+				'rule' => array('isUnique'),
+				'message' => 'Nome de usuário já esta em uso',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'documento' => array(
+			'notBlank' => array(
+				'rule' => array('isUnique'),
+				'message' => 'Documento já esta em uso',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'email' => array(
+			'notBlank' => array(
+				'rule' => array('isUnique'),
+				'message' => 'Email já esta em uso',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'celular' => array(
+			'notBlank' => array(
+				'rule' => array('isUnique'),
+				'message' => 'Celular já esta em uso',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule

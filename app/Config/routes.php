@@ -32,6 +32,8 @@
 	Router::connect('/cliente/buscar', array('controller' => 'clientes', 'action' => 'find'));
 	Router::connect('/cliente/cep', array('controller' => 'clientes', 'action' => 'find_cep'));
 
+	##rotas de usuario
+	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
 
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	Router::connect('/pizzas/listar', array('controller' => 'produtos', 'action' => 'listing'));
