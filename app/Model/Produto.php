@@ -91,9 +91,9 @@ class Produto extends AppModel {
 			'fields' => '',
 			'order' => ''
 		),
-		'Classe' => array(
-			'className' => 'Classe',
-			'foreignKey' => 'classe_id',
+		'Categoria' => array(
+			'className' => 'Categoria',
+			'foreignKey' => 'categoria_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

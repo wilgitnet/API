@@ -35,8 +35,8 @@
 	##rotas de usuario
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
 
-	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-	Router::connect('/pizzas/listar', array('controller' => 'produtos', 'action' => 'listing'));
+	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
+	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */

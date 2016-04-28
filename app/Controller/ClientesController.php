@@ -28,12 +28,51 @@ class ClientesController extends AppController {
 	##buscando dados a partir de dominio
 	public function find_dominio()
 	{
-		##realizar aqui busca por cliente
-		$this->DadosArray = $this->Cliente->find('first', array(
+
+		if(empty($this->request->data['dominio']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar dominio do cliente';
+			$this->EncodeReturn();
+			exit;
+		}
+
+		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
+		$this->Cliente->unbindModel(array('hasMany' => array('Categoria')));		
+
+		##realizar aqui busca por cliente atraves do dominio
+		$this->DadosArray = $this->Cliente->find('first', array(			
 		    'conditions' => array(		        
-		        'dominio' => $this->request->data['dominio']
+		        'Cliente.dominio' => $this->request->data['dominio']
 		    )		    
 		));		
+		
+		if(empty($this->DadosArray['Cliente']['id']))
+		{
+			$this->Message = 'Cliente não encontrado';
+			$this->Return = false;
+			$this->EncodeReturn();
+			exit;
+		}
+
+		##buscando categoria principal		
+		$this->loadModel('Categoria');
+		$this->Categoria->unbindModel(array('belongsTo' => array('Cliente', 'Situacao')));		
+		$categoria = $this->Categoria->find('first', array(
+			'conditions' => array(				
+				'Categoria.principal' => 'S',
+				'Categoria.situacao_id' => $this->SituacaoOK,
+				'Categoria.cliente_id' => $this->DadosArray['Cliente']['id']
+			),
+			'limit' => 1
+		));
+
+		if(!empty($categoria['Categoria']['id']))
+		{
+			$this->DadosArray['Cliente']['menu_principal'] = $categoria['Categoria']['nome'];
+			$this->DadosArray['Cliente']['categoria_id'] = $categoria['Categoria']['id'];
+		}
+		
 		$this->EncodeReturn();
 		exit;
 	}
@@ -46,6 +85,8 @@ class ClientesController extends AppController {
 		{
 			$this->Return = false;
 			$this->Message = 'Informar id do cliente';
+			$this->EncodeReturn();
+			exit;
 		}
 
 		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		

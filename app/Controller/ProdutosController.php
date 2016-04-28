@@ -9,27 +9,74 @@ App::uses('AppController', 'Controller');
 class ProdutosController extends AppController {
 
 
-	/**
-	 * listar method
-	 * Listando produtos de clientes	 
-	 * @return json
-	 */
-	public function listing()
+	##buscando produtos da home
+	public function home()
 	{
-		$this->Message = 'listagem de produtos';
-		$this->Return = true;
-		$this->EncodeReturn();		
-	}
+		$ProdutosAleatorios = array();
+		$destaques = array();
+		$QtdAleatorio = 6;
 
+		if(empty($this->request->data['categoria_id']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar categoria do produto';
+			$this->EncodeReturn();
+			exit;
+		}
 
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
-		$this->Produto->recursive = 0;
-		$this->set('produtos', $this->Paginator->paginate());
+		##realizar aqui busca por produtos em destaque
+		$this->Produto->unbindModel(array('belongsTo' => array('Categoria', 'Situacao')));				
+		$destaques = $this->Produto->find('all', array(			
+		    'conditions' => array(		        
+		        'Produto.categoria_id' => $this->request->data['categoria_id'],
+		        'Produto.destaque' => 'S',
+		        'Produto.situacao_id' => $this->SituacaoOK
+		    ),
+		    'limit' => 3		    
+		));	
+
+		##verifica quantos aleatorios vai buscar de acordo com a quantidade de destaques para montar grids com 6 produtos
+		$restQtd = $QtdAleatorio - count($destaques);
+
+		##busca produtos aleatorios
+		$this->Produto->unbindModel(array('belongsTo' => array('Categoria', 'Situacao')));		
+		$aleatorios = $this->Produto->find('all', array(			
+		    'conditions' => array(		        
+		        'Produto.categoria_id' => $this->request->data['categoria_id'],
+		        'Produto.destaque <> ' => 'S',
+		        'Produto.situacao_id' => $this->SituacaoOK
+		    ),		    
+		));	
+
+		##obrigatorio ter no minimo 6 produtos cadastrados
+		if(count($aleatorios) < $restQtd)
+		{
+			$this->Return = false;
+			$this->Message = 'Nenhum produto encontrado. Inserir produtos no site';
+			$this->EncodeReturn();
+			exit;
+		}
+
+		##sorteando array de produtos retornados sem destaque
+		$SortAleatorios = array_rand($aleatorios, $restQtd);
+		foreach($SortAleatorios as $key => $value)
+		{						
+			$ProdutosAleatorios[] = $aleatorios[$value];			
+		}
+
+		##inserindo aleatorios em destaques se o destaque não completar 3
+		$u = 0;
+		for ($i=count($destaques); $i < 3 ; $i++) 
+		{ 
+			$destaques[] = $ProdutosAleatorios[$u];
+			unset($ProdutosAleatorios[$u]);
+			$u++;
+		}		
+				
+		$this->DadosArray['aleatorios'] = $ProdutosAleatorios;
+		$this->DadosArray['destaques']  = $destaques;		
+		$this->EncodeReturn();
+		exit;
 	}
 
 /**
