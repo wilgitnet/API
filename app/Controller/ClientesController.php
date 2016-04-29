@@ -13,7 +13,7 @@ class ClientesController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator');
+	public $components = array('Email');
 
 /**
  * index method
@@ -27,14 +27,12 @@ class ClientesController extends AppController {
 
 	##buscando dados a partir de dominio
 	public function find_dominio()
-	{
-
+	{	
 		if(empty($this->request->data['dominio']))
 		{
 			$this->Return = false;
 			$this->Message = 'Informar dominio do cliente';
-			$this->EncodeReturn();
-			exit;
+			$this->EncodeReturn();			
 		}
 
 		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
@@ -51,8 +49,7 @@ class ClientesController extends AppController {
 		{
 			$this->Message = 'Cliente não encontrado';
 			$this->Return = false;
-			$this->EncodeReturn();
-			exit;
+			$this->EncodeReturn();			
 		}
 
 		##buscando categoria principal		
@@ -73,20 +70,19 @@ class ClientesController extends AppController {
 			$this->DadosArray['Cliente']['categoria_id'] = $categoria['Categoria']['id'];
 		}
 		
-		$this->EncodeReturn();
-		exit;
+		$this->EncodeReturn();		
 	}
 
 
 	##buscando dados de cliente
 	public function find()
-	{			
+	{				
+
 		if(empty($this->request->data['id_cliente']))
 		{
 			$this->Return = false;
 			$this->Message = 'Informar id do cliente';
-			$this->EncodeReturn();
-			exit;
+			$this->EncodeReturn();			
 		}
 
 		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
@@ -106,8 +102,7 @@ class ClientesController extends AppController {
 			$this->Return = false;
 		}
 
-		$this->EncodeReturn();
-		exit;
+		$this->EncodeReturn();		
 	}
 
 	##funcao para buscar cep
@@ -134,8 +129,7 @@ class ClientesController extends AppController {
 			$this->DadosArray['logradouro'] = $reg->tipo_logradouro . ' ' . $reg->logradouro;
 		}
 
-		$this->EncodeReturn();
-		exit;
+		$this->EncodeReturn();		
 	}
 
 
@@ -160,7 +154,7 @@ class ClientesController extends AppController {
  * @return void
  */
 	public function add() {
-		if ($this->request->is('post')) {
+		if ($this->request->is('post')) {			
 			$this->Cliente->create();
 			if ($this->Cliente->save($this->request->data)) {
 				$this->Flash->success(__('The cliente has been saved.'));

@@ -8,50 +8,15 @@ App::uses('AppController', 'Controller');
  */
 class UsuariosController extends AppController {
 
-/**
- * Components
- *
- * @var array
- */
-	public $components = array('Paginator');
-
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
-		$this->Usuario->recursive = 0;
-		$this->set('usuarios', $this->Paginator->paginate());
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
-		if (!$this->Usuario->exists($id)) {
-			throw new NotFoundException(__('Invalid usuario'));
-		}
-		$options = array('conditions' => array('Usuario.' . $this->Usuario->primaryKey => $id));
-		$this->set('usuario', $this->Usuario->find('first', $options));
-	}
-
-/**
- * add method
- *
- * @return void
- */
+	##inserindo usuario
 	public function add() {
 
 		if ($this->request->is('post')) 
 		{			
 
 			unset($this->request->data['TokenRequest']);
-			$POST = array('Usuario'=>$this->request->data);
+			$this->request->data['senha'] = md5($this->request->data['senha']);
+			$POST = array('Usuario'=>$this->request->data);			
 			$this->Usuario->create();
 
 			if ($this->Usuario->save($POST)) 
@@ -70,8 +35,154 @@ class UsuariosController extends AppController {
 			}
 		}
 
+		$this->EncodeReturn();		
+	}
+
+	##realizando login de usuario
+	public function login()
+	{		
+
+		if(empty($this->request->data['usuario']) || empty($this->request->data['senha']))
+		{
+			$this->Message = 'Informar login e senha para realizar login';	
+			$this->Return = false;
+			$this->EncodeReturn();						
+		}
+
+		##realizar aqui busca por cliente
+		$this->Usuario->unbindModel(array('hasMany' => array('Pedido')));	
+		$EmailSearch = $this->Usuario->find('first', array(
+		    'conditions' => array(		        
+		        'Usuario.usuario' => $this->request->data['usuario']		        
+		    ),
+		    'limit' => 1,
+		    'fields' => array('email')
+		));		
+
+		$password = $this->request->data['senha'];
+		$email = $this->request->data['usuario'];
+		if(!empty($EmailSearch['Usuario']['email']))
+			$email = $EmailSearch['Usuario']['email'];
+
+		##login
+		$this->Usuario->unbindModel(array('hasMany' => array('Pedido')));	
+		$login = $this->Usuario->find('first', array(
+			'conditions' => array(
+				'Usuario.email' => $email,
+				'Usuario.senha' => $password				
+			),
+			'limit' => 1
+		));
+
+		if(empty($login['Usuario']['id']))
+		{
+			$this->Message = 'Informar login e senha para realizar login';	
+			$this->Return = false;
+			$this->EncodeReturn();
+		}	
+
+		$this->DadosArray = $login;
 		$this->EncodeReturn();
-		exit;
+	}
+
+	##gerando token para troca de senha
+	public function password_token()
+	{
+		if(empty($this->request->data['email']))
+		{	
+			$this->Message = 'Informar email para recuperar senha';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$this->Usuario->unbindModel(array('hasMany' => array('Pedido')));	
+		$email = $this->Usuario->find('first', array(
+			'conditions' => array(
+				'Usuario.email' => $this->request->data['email']
+			),
+			'limit' => 1
+		));
+
+		if(empty($email['Usuario']['id']))
+		{
+			$this->Message = 'Email não encontrado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+		
+		$token = $this->GenerateTokenSenha();
+
+		if(!$this->Usuario->save(array('Usuario'=>array('id'=>$email['Usuario']['id'], 'token_senha'=>$token)))) 
+		{
+			$this->Message = 'Ocorreu um erro na sua solicitação. Tente novamente';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+		
+		$email['token_senha'] = $token;
+		$this->DadosArray = $email;
+		$this->EncodeReturn();
+	}
+
+
+	public function new_password()
+	{
+		if(empty($this->request->data['token']))
+		{
+			$this->Message = 'Informar token para troca de senha';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		if(substr($this->request->data['token'], 0, 1) != 'S')
+		{
+			$this->Message = 'Token inválido ou já utilizado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$this->Usuario->unbindModel(array('hasMany' => array('Pedido')));
+		$token = $this->Usuario->find('first', array(
+			'conditions' => array(
+				'Usuario.token_senha' => $this->request->data['token']
+			)
+		));
+
+		if(empty($token['Usuario']['id']))
+		{			
+			$this->Message = 'Token inválido ou já utilizado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		if(!$this->Usuario->save(array('Usuario'=>array('id'=>$token['Usuario']['id'], 'token_senha'=>'', 'senha'=>$this->request->data['senha'])))) 
+		{
+			$this->Message = 'Ocorreu um erro na sua solicitação. Tente novamente';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}		
+
+		$this->EncodeReturn();
+	}	
+
+	##gerando token para senha
+	private function GenerateTokenSenha()
+	{
+		$token = 'S';
+		$caracteres = '';		
+		$lmai = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$num = '1234567890';		
+		$caracteres .= $lmai;
+		$caracteres .= $num;
+		
+		$len = strlen($caracteres);					
+		for ($i=0; $i < 25; $i++) 
+		{ 
+			$rand = mt_rand(1, $len);		
+			$token .= $caracteres[$rand-1];
+		}
+			
+		return $token;
 	}
 
 /**

@@ -21,7 +21,6 @@ class ProdutosController extends AppController {
 			$this->Return = false;
 			$this->Message = 'Informar categoria do produto';
 			$this->EncodeReturn();
-			exit;
 		}
 
 		##realizar aqui busca por produtos em destaque
@@ -53,8 +52,7 @@ class ProdutosController extends AppController {
 		{
 			$this->Return = false;
 			$this->Message = 'Nenhum produto encontrado. Inserir produtos no site';
-			$this->EncodeReturn();
-			exit;
+			$this->EncodeReturn();			
 		}
 
 		##sorteando array de produtos retornados sem destaque
@@ -75,8 +73,7 @@ class ProdutosController extends AppController {
 				
 		$this->DadosArray['aleatorios'] = $ProdutosAleatorios;
 		$this->DadosArray['destaques']  = $destaques;		
-		$this->EncodeReturn();
-		exit;
+		$this->EncodeReturn();		
 	}
 
 /**
