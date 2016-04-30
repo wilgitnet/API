@@ -118,18 +118,60 @@ class ClientesController extends AppController {
  		
 		if(empty($reg->cidade))
 		{
-			$this->Message = 'CEP não encontrado';
+			$this->Message = 'Informar um CEP Válido';
 			$this->Return = false;
+			$this->EncodeReturn();
 		}
 		else
-		{
+		{		
 			$this->DadosArray['uf'] = $reg->uf;
 			$this->DadosArray['cidade'] = $reg->cidade;
 			$this->DadosArray['bairro'] = $reg->bairro;
 			$this->DadosArray['logradouro'] = $reg->tipo_logradouro . ' ' . $reg->logradouro;
-		}
 
-		$this->EncodeReturn();		
+			##calculando distancia entre enderecos
+			if(!empty($this->request->data['calcula_distancia']))
+			{
+				##endereco informado pelo usuario
+				$enderecoUsuario = trim($reg->cidade).' - '.trim($reg->uf).', '.trim($this->request->data['cep']);
+								   								
+				##enderedo de cliente
+				$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
+				$this->Cliente->unbindModel(array('hasMany' => array('Categoria')));		
+				$cliente = $this->Cliente->find('first', array(
+				    'conditions' => array(		        
+				        'Cliente.id' => $this->request->data['cliente_id'],		        
+				    )		    
+				));
+
+				$enderecoCliente = $cliente['Cliente']['cidade'].' - '.$cliente['Cliente']['estado'].', '.$cliente['Cliente']['cep'];
+				
+				##calculando distancia entre ceps
+				$xml = simplexml_load_file("http://maps.google.com/maps/api/directions/xml?sensor=false&origin=".$enderecoUsuario."&destination=".$enderecoCliente."");
+				
+				if($xml->status == 'OK')
+				{
+					$KM = $xml->route->leg->distance->value/1000;
+					$KMCliente = floatval($cliente['Cliente']['km']);
+					
+					if($KMCliente < $KM)
+					{
+						$this->Message = 'Infelizmente seu endereço não recebe entrega de nosso site';
+						$this->Return = false;
+						$this->EncodeReturn();	
+					}
+
+				}
+				else
+				{
+					$this->Message = 'Ocorreu um erro no calculo de seu endereço, Tente novamente';
+					$this->Return = false;
+					$this->EncodeReturn();	
+				}		
+			}
+
+			$this->EncodeReturn();	
+		}	
 	}
 
 
