@@ -65,18 +65,14 @@ class ClientesController extends AppController {
 		));
 
 		if(!empty($categoria['Categoria']['id']))
-		{
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida						
+		{			
 			$this->DadosArray['Cliente']['menu_principal'] = $categoria['Categoria']['nome'];
 			$this->DadosArray['Cliente']['placeholder'] = $categoria['Categoria']['placeholder'];
-			$this->DadosArray['Cliente']['categoria_id'] = $categoria['Categoria']['id'];
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida
-			##verificando se categoria tem produtos suficiente para ser valida
+			$this->DadosArray['Cliente']['categoria_id'] = $categoria['Categoria']['id'];		
+
+			$categorias = $this->Cliente->query(sprintf('SELECT Categorias.id, Categorias.nome, Categorias.placeholder FROM categorias Categorias where cliente_id = %d and (Select count(*) FROM produtos where categoria_id = Categorias.id) > 3', $this->DadosArray['Cliente']['id']));
+
+			$this->DadosArray['CategoriaArray'] = $categorias;	
 		}
 		
 		$this->EncodeReturn();		
