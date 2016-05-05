@@ -79,7 +79,7 @@ class ProdutosController extends AppController {
 	##buscando produtos de uma categoria e categorias validas
 	public function find()
 	{
-
+		$carrinho = array();
 		if(empty($this->request->data['categoria_placeholder']) || empty($this->request->data['id_cliente']))
 		{
 			$this->Return = false;
@@ -108,6 +108,388 @@ class ProdutosController extends AppController {
 		$this->DadosArray['ProdutoArray'] = $produtos;
 		$this->DadosArray['CategoriaArray'] = $categorias;
 		$this->EncodeReturn();	
+	}
+
+	##verifica se um produto é válido e retorna com array com seus dados
+	public function purchase()
+	{
+		if(empty($this->request->data['id_cliente']) || empty($this->request->data['produto_id']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar produto e codigo do cliente';
+			$this->EncodeReturn();	
+		}
+
+		$ProdutoID = $this->request->data['produto_id'];
+		$ClienteID = $this->request->data['id_cliente'];
+
+		##buscando produto informado
+		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));
+		$produto = $this->Produto->find('first', array(
+
+			'conditions' => array(
+
+				'Produto.id' => $ProdutoID,
+				'Categoria.cliente_id' => $ClienteID,
+				'Produto.situacao_id' => $this->SituacaoOK
+			)
+		));
+
+		if(empty($produto['Produto']['id']))
+		{
+			$this->Return = false;
+			$this->Message = 'Produto inválido';
+			$this->EncodeReturn();	
+		}
+
+		##verifica se é para adicionar ao carrinho ou apenas validar produto informado
+		if(!empty($this->request->data['add']))
+		{
+			if(!empty($this->request->data['carrinho']))
+			{
+				$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+				$CartNew 	 = $CartSession;				
+
+				##verificando se vai add qtd de um item já no carrinho ou add um novo item								
+				$i = 0;			
+							
+				$CartNew['item'][] = $produto;
+								
+				##realiza soma de valores
+				$this->CountPurchase($CartNew);			
+			}
+			else
+			{					
+				$borda = 'N';				
+				##definindo borda
+				if($produto['Categoria']['borda'] == 'S')
+				{
+					$borda = 'S';					
+				}
+
+				##definindo valor de produto inicial
+				$valor = $produto['Produto']['valor'];				
+
+				##criando carrinho de compra				
+				$carrinho['item'][] 		= $produto;
+				$carrinho['total']  		= $valor;
+				$carrinho['qtd']    		= 1;
+				$carrinho['valor_cep']    	= 0;
+				$carrinho['taxa']	    	= 0;
+				$carrinho['status_pedido']	= 1;				
+				$carrinho['borda']			= $borda;
+				
+				$this->DadosArray['carrinho'] = $carrinho;					
+			}
+		}
+		else
+		{
+			$this->DadosArray = $produto;	
+		}
+		
+		$this->EncodeReturn();	
+	}
+
+	##deletando um produto de compra
+	public function delete_product_purchase()
+	{
+		if(empty($this->request->data['id_cliente']) || empty($this->request->data['produto_id']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar produto e codigo do cliente';
+			$this->EncodeReturn();	
+		}
+
+		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+
+		$i = 0;				
+		foreach ($CartSession['item'] as $item) 
+		{
+			if($item['Produto']['id'] == $this->request->data['produto_id'] && $i == $this->request->data['indice'])
+			{
+				unset($CartSession['item'][$i]);				
+			}
+
+			$i++;
+		}		
+
+		sort($CartSession['item']);	
+
+		##realiza soma de valores
+		$this->CountPurchase($CartSession);	
+		$this->EncodeReturn();	
+	}
+
+
+	public function valid_purchase($verify=false)
+	{
+		if(empty($this->request->data['id_cliente']) || empty($this->request->data['carrinho']))
+		{	
+			$this->Return = false;
+			$this->Message = 'Dados inválidos';
+			$this->EncodeReturn();
+		}
+
+		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+
+		$meiaBroto 		= 0;
+		$meia     		= 0;
+		$inteira   		= 0;
+		$inteiraBroto   = 0;
+		foreach($CartSession['item'] as $item)
+		{
+			if(!empty($item['Produto']['usuario_metade']) && !empty($item['Produto']['usuario_broto']))
+			{
+				$meiaBroto++;
+			}
+
+			if(!empty($item['Produto']['usuario_metade']) && empty($item['Produto']['usuario_broto']))
+			{
+				$meia++;
+			}
+
+			if($item['Categoria']['borda'] == 'S' && empty($item['Produto']['usuario_broto']) && empty($item['Produto']['usuario_metade']))
+			{
+				$inteira++;
+			}
+
+			if($item['Categoria']['borda'] == 'S' && !empty($item['Produto']['usuario_broto']) && empty($item['Produto']['usuario_metade']))
+			{
+				$inteiraBroto++;
+			}
+		}
+		
+		##quantide de produtos completos
+		$CartSession['qtd_produto_completo'] = $inteira + $inteiraBroto;
+
+		if($meiaBroto % 2 == 0)
+		{		
+			$div = $meiaBroto / 2;		
+			$CartSession['qtd_produto_completo'] = $div + $CartSession['qtd_produto_completo'];			
+		}
+		else
+		{
+			if(!$verify)
+			{
+				$this->Return = false;
+				$this->Message = 'Favor completar a outra metade de sua pizza broto';
+				$this->EncodeReturn();	
+			}
+			
+		}
+
+		if($meia % 2 == 0)
+		{
+			$div = $meia / 2;			
+			$CartSession['qtd_produto_completo'] = $div + $CartSession['qtd_produto_completo'];			
+		}
+		else
+		{
+			if(!$verify)
+			{
+				$this->Return = false;
+				$this->Message = 'Favor completar a outra metade de sua pizza';
+				$this->EncodeReturn();	
+			}			
+		}
+
+		if(!$verify)
+		{
+			$this->DadosArray['carrinho'] = $CartSession;
+			$this->EncodeReturn();		
+		}
+		else
+		{
+			return $CartSession;
+		}
+		
+	}
+
+	##meia ou inteira
+	public function half()
+	{
+
+		if(empty($this->request->data['id_cliente']) || empty($this->request->data['produto_id']) || emptY($this->request->data['inteira']))
+		{
+			$this->Return = false;
+			$this->Message = 'Informar produto e codigo do cliente e tipo (inteira ou meia)';
+			$this->EncodeReturn();	
+		}
+
+		$ProdutoID = $this->request->data['produto_id'];
+		$ClienteID = $this->request->data['id_cliente'];		
+
+		##buscando produto informado
+		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));
+		$produto = $this->Produto->find('first', array(
+
+			'conditions' => array(
+
+				'Produto.id' => $ProdutoID,
+				'Categoria.cliente_id' => $ClienteID,
+				'Produto.situacao_id' => $this->SituacaoOK
+			)
+		));
+		
+		if(empty($produto['Produto']['id']))
+		{
+			$this->Return = false;
+			$this->Message = 'Produto inválido';
+			$this->EncodeReturn();	
+		}
+
+		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+		//sort($CartSession['item']);		
+
+		##alterando valor de pizza
+		$i = 0;		
+		foreach($CartSession['item'] as $item)
+		{
+			if($item['Produto']['id'] == $produto['Produto']['id'] && $i == $this->request->data['indice'])
+			{			
+				##pizza inteira
+				if($this->request->data['inteira'] == 'true')
+				{					
+					if(!empty($this->request->data['meia']))
+					{
+						unset($CartSession['item'][$i]['Produto']['usuario_metade']);
+					}
+
+					if(!empty($this->request->data['broto']))
+					{
+						unset($CartSession['item'][$i]['Produto']['usuario_broto']);
+					}
+
+					$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor'];
+
+					if(!empty($CartSession['item'][$i]['Produto']['usuario_metade']))
+					{
+						$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor_metade'];
+					}
+
+					if(!empty($CartSession['item'][$i]['Produto']['usuario_broto']))
+					{
+						$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor_mini'];
+					}
+					
+				}
+
+				##meia pizza ou broto
+				else
+				{
+					##meia pizza
+					if(!empty($this->request->data['meia']))
+					{
+						if($produto['Produto']['metade'] == 'S')
+						{
+							$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor_metade'];
+							$CartSession['item'][$i]['Produto']['usuario_metade'] = 'S';
+						}
+
+					}			
+
+					##broto
+					if(!empty($this->request->data['broto']))
+					{
+						if($produto['Produto']['mini'] == 'S')
+						{
+							$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor_mini'];
+							$CartSession['item'][$i]['Produto']['usuario_broto'] = 'S';
+						}
+					}	
+
+					if(!empty($CartSession['item'][$i]['Produto']['usuario_broto']) && !empty($CartSession['item'][$i]['Produto']['usuario_metade']))
+					{
+						$CartSession['item'][$i]['Produto']['valor'] = $produto['Produto']['valor_mini_metade'];						
+					}		
+				}
+			}
+			
+			$i++;
+		}
+
+		##realiza soma de valores
+		$this->CountPurchase($CartSession);			
+		$this->EncodeReturn();	
+	}
+
+	##borda recheada
+	public function edge()
+	{
+		##buscando valor da borda
+		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+		$SearchEdge  = true;
+		$ValorBorda  = 0;
+
+		foreach ($CartSession['item'] as $item) 
+		{
+			if($SearchEdge && $this->request->data['borda'] == 'true')
+			{
+				if($item['Categoria']['borda'] == 'S')
+				{					
+					$ValorBorda = $item['Categoria']['valor_borda'];
+					$SearchEdge = false;
+				}
+			}
+		}
+		
+		##buscando quantidade de produtos
+		$array = $this->valid_purchase(true);
+		$qtd_produto_completo = $array['qtd_produto_completo'];		
+
+		if($this->request->data['borda'] == 'true')
+		{			
+			$CartSession['valor_borda'] = $ValorBorda * $qtd_produto_completo;		
+			$CartSession['total'] 		= $CartSession['total'] + $CartSession['valor_borda'];		
+
+		}	
+		else
+		{			
+			$CartSession['total'] 		= $CartSession['total'] - $CartSession['valor_borda'];
+			$CartSession['valor_borda'] = 0;		
+		}
+		
+		$this->DadosArray['carrinho'] = $CartSession;	
+		$this->EncodeReturn();	
+	}
+
+	##somando valores totais
+	private function CountPurchase($CartNew)
+	{
+		##zerando valores para nova soma
+		$CartNew['total'] 	  = 0;
+		$CartNew['qtd']		  = 0;
+		$borda 				  = 'N';
+		$valor_borda		  = 0;
+		$qtd_produto_completo = 0;
+
+		if(!empty($CartNew['valor_borda']))
+		{
+			if($CartNew['valor_borda'] > 0)
+			{
+				$array = $this->valid_purchase(true);
+				$qtd_produto_completo = $array['qtd_produto_completo'];	
+			}
+		}
+					
+		foreach($CartNew['item'] as $item)
+		{
+			$valor = $item['Produto']['valor'];			
+
+			if($item['Categoria']['borda'] == 'S')
+			{
+				$borda = 'S';
+				$valor_borda = $item['Categoria']['valor_borda'] * $qtd_produto_completo;
+			}
+				
+
+			$CartNew['total'] = $CartNew['total'] + $valor;			
+			$CartNew['qtd']	  = $CartNew['qtd'] + 1;					
+			$CartNew['borda'] = $borda;
+		}	
+
+		$CartNew['total'] 	  = $CartNew['total'] + $valor_borda;
+		$this->DadosArray['carrinho'] = $CartNew;	
 	}
 
 /**

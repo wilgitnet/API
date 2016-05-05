@@ -41,6 +41,14 @@
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
 	Router::connect('/produtos/buscar', array('controller' => 'produtos', 'action' => 'find'));
+	Router::connect('/produtos/validar', array('controller' => 'produtos', 'action' => 'purchase'));
+	Router::connect('/produtos/adicionar', array('controller' => 'produtos', 'action' => 'purchase'));
+	Router::connect('/produtos/excluir', array('controller' => 'produtos', 'action' => 'delete_product_purchase'));
+	Router::connect('/produtos/meia-inteira', array('controller' => 'produtos', 'action' => 'half'));
+	Router::connect('/produtos/broto', array('controller' => 'produtos', 'action' => 'half'));
+	Router::connect('/produtos/borda', array('controller' => 'produtos', 'action' => 'edge'));
+	Router::connect('/produtos/validar-pedido', array('controller' => 'produtos', 'action' => 'valid_purchase'));
+
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
