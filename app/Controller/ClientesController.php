@@ -173,7 +173,9 @@ class ClientesController extends AppController {
 					$this->Return = false;
 					$this->EncodeReturn();	
 				}		
-			}
+
+				$this->DadosArray['KM'] = $KM;
+			}		
 
 			$this->EncodeReturn();	
 		}	
