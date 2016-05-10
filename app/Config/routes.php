@@ -38,6 +38,7 @@
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));
 
+	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
 	Router::connect('/produtos/buscar', array('controller' => 'produtos', 'action' => 'find'));
@@ -48,6 +49,9 @@
 	Router::connect('/produtos/broto', array('controller' => 'produtos', 'action' => 'half'));
 	Router::connect('/produtos/borda', array('controller' => 'produtos', 'action' => 'edge'));
 	Router::connect('/produtos/validar-pedido', array('controller' => 'produtos', 'action' => 'valid_purchase'));
+
+	##pedidos
+	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

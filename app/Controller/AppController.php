@@ -19,6 +19,7 @@ class AppController extends Controller
 	public $DadosArray 		= array();
 	public $SituacaoOK 		= 1;
 	public $MessageArray 	= array();
+	public $percentual 		= 3;
 
 	public function beforeFilter() 
 	{

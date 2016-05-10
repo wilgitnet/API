@@ -46,24 +46,104 @@ class PedidosController extends AppController {
  * @return void
  */
 	public function add() {
-		if ($this->request->is('post')) {
-			$this->Pedido->create();
-			if ($this->Pedido->save($this->request->data)) {
-				$this->Flash->success(__('The pedido has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The pedido could not be saved. Please, try again.'));
-			}
+
+		if(empty($this->request->data['carrinho']))
+		{
+			$this->Return = false;
+			$this->Message = 'Enviar pedido para finalizar';
+			$this->EncodeReturn();	
 		}
-		$usuarios = $this->Pedido->Usuario->find('list');
-		$situacaoPedidos = $this->Pedido->SituacaoPedido->find('list');
-		$formaPagamentos = $this->Pedido->FormaPagamento->find('list');
-		$this->set(compact('usuarios', 'situacaoPedidos', 'formaPagamentos'));
+
+		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
+		
+		$troco = $this->request->data['troco'];
+		if(empty($this->request->data['troco']))
+			$troco = 0;
+
+		$maquina = 'N';
+		if($this->request->data['tipo_pagamento']!=3)
+			$maquina = 'S';
+
+		 ##calculando taxa e valores totais do pedido
+		 $percentual = $this->percentual / 100.0; 		 
+		 $valor_total = $CartSession['total'] + $CartSession['valor_cep'];		 		 
+		 $valor_total_antigo = $valor_total;
+		 $valor_total = $valor_total + ($percentual * $valor_total);
+		 $valor_percentual = $valor_total - $valor_total_antigo;
+		 $valor_total_taxas = $valor_percentual + $CartSession['valor_cep'] + $CartSession['valor_borda'];
+
+		##realizando primeiro insert de pedido
+		$POST = array('Pedido'=>array(
+					'data_pedido'=>date('Y/m/d h:i:s'),
+					'usuario_id'=>$CartSession['usuario_id'],
+					'endereco'=>$CartSession['endereco']['endereco'],
+					'numero'=>$CartSession['endereco']['numero'],
+					'bairro'=>$CartSession['endereco']['bairro'],
+					'cidade'=>$CartSession['endereco']['cidade'],
+					'estado'=>$CartSession['endereco']['estado'],
+					'complemento'=>$CartSession['endereco']['complemento'],
+					'cep'=>$CartSession['endereco']['cep'],
+					'situacao_pedido_id'=>1,
+					'forma_pagamento_id'=> $this->request->data['tipo_pagamento'],
+					'troco' => $troco,
+					'maquina' => $maquina,
+					'valor_borda' => $CartSession['valor_borda'],
+					'valor_cep' => $CartSession['valor_cep'],
+					'valor_taxa' => $valor_percentual,
+					'valor_total' => $valor_total,
+					'valor_total_taxas' => $valor_total_taxas
+				));
+
+		if ($this->request->is('post')) 
+		{
+			$this->Pedido->create();
+			if ($this->Pedido->save($POST)) 
+			{
+				$pedido_id = $this->Pedido->getLastInsertId();				
+				$this->loadModel('PedidoProduto');
+
+				foreach($CartSession['item'] as $item)
+				{
+					$metade = 'N';
+					if(!empty($item['usuario_metade']))
+						$metade = 'S';
+
+					$broto = 'N';
+					if(!empty($item['usuario_broto']))
+						$broto = 'S';
+											
+					$POSTITEM = array('PedidoProduto'=>array(
+									'pedido_id' => $pedido_id,
+									'produto_id' => $item['Produto']['id'],
+									'metade' => $metade,
+									'broto' => $broto,
+									'valor' => $item['Produto']['valor']
+						));
+
+					$this->PedidoProduto->create();
+					if (!$this->PedidoProduto->save($POSTITEM)) 
+					{	
+						$this->Message = 'Ocorreu um Erro na geração dos itens do seu pedido. Tente novamente';								
+						$this->Return = false;
+						$this->EncodeReturn();		
+					}
+				}
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um Erro na geração do pedido';								
+				$this->Return = false;
+				$this->EncodeReturn();		
+			}
+
+			$this->Message = 'Pedido realizado com sucesso';
+			$this->EncodeReturn();		
+		}	
 	}
 
 /**
  * edit method
- *
+ *	
  * @throws NotFoundException
  * @param string $id
  * @return void

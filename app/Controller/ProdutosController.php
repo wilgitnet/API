@@ -513,7 +513,7 @@ class ProdutosController extends AppController {
  *
  * @return void
  */
-	public function add() {
+	public function add() {		
 		if ($this->request->is('post')) {
 			$this->Produto->create();
 			if ($this->Produto->save($this->request->data)) {
