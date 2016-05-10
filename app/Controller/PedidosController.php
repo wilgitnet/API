@@ -55,7 +55,11 @@ class PedidosController extends AppController {
 		}
 
 		$CartSession = json_decode(base64_decode($this->request->data['carrinho']), 1);
-		
+
+		$valor_borda = 0;
+		if(!empty($CartSession['valor_borda']))
+			$valor_borda = $CartSession['valor_borda'];
+
 		$troco = $this->request->data['troco'];
 		if(empty($this->request->data['troco']))
 			$troco = 0;
@@ -70,7 +74,7 @@ class PedidosController extends AppController {
 		 $valor_total_antigo = $valor_total;
 		 $valor_total = $valor_total + ($percentual * $valor_total);
 		 $valor_percentual = $valor_total - $valor_total_antigo;
-		 $valor_total_taxas = $valor_percentual + $CartSession['valor_cep'] + $CartSession['valor_borda'];
+		 $valor_total_taxas = $valor_percentual + $CartSession['valor_cep'] + $valor_borda;
 
 		##realizando primeiro insert de pedido
 		$POST = array('Pedido'=>array(
@@ -87,7 +91,7 @@ class PedidosController extends AppController {
 					'forma_pagamento_id'=> $this->request->data['tipo_pagamento'],
 					'troco' => $troco,
 					'maquina' => $maquina,
-					'valor_borda' => $CartSession['valor_borda'],
+					'valor_borda' => $valor_borda,
 					'valor_cep' => $CartSession['valor_cep'],
 					'valor_taxa' => $valor_percentual,
 					'valor_total' => $valor_total,
