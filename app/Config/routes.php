@@ -34,6 +34,7 @@
 
 	##rotas de usuario
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
+	Router::connect('/usuario/editar', array('controller' => 'usuarios', 'action' => 'edit'));
 	Router::connect('/usuario/login', array('controller' => 'usuarios', 'action' => 'login'));
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));

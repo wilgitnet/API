@@ -193,20 +193,36 @@ class UsuariosController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
-		if (!$this->Usuario->exists($id)) {
-			throw new NotFoundException(__('Invalid usuario'));
+
+		if (!$this->Usuario->exists($this->request->data['id'])) 
+		{
+			$this->Message = 'Ocorreu um erro no seu cadastro';
+			$this->Return = false;	
 		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Usuario->save($this->request->data)) {
-				$this->Flash->success(__('The usuario has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The usuario could not be saved. Please, try again.'));
+
+		if ($this->request->is(array('post', 'put'))) 
+		{
+			unset($this->request->data['TokenRequest']);			
+			$POST = array('Usuario'=>$this->request->data);		
+
+			if ($this->Usuario->save($POST)) 
+			{
+				$this->Message = 'Usuário editado com sucesso';
+				$this->Return = true;
+			} 
+			else 
+			{
+				$this->Message = 'Ocorreu um Erro no seu cadastro';				
+				foreach ($this->Usuario->validationErrors as $array) 
+				{
+					$this->MessageArray[] = $array[0];
+				}				
+				$this->Return = false;
 			}
-		} else {
-			$options = array('conditions' => array('Usuario.' . $this->Usuario->primaryKey => $id));
-			$this->request->data = $this->Usuario->find('first', $options);
-		}
+		} 
+
+		$this->EncodeReturn();
+
 	}
 
 /**
