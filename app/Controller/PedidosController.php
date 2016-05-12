@@ -40,6 +40,48 @@ class PedidosController extends AppController {
 		$this->set('pedido', $this->Pedido->find('first', $options));
 	}
 
+	public function find()
+	{		
+		if(empty($this->request->data['id_pedido']) || empty($_POST['id_usuario']))
+		{
+			$this->Message = 'Ocorreu um erro na sua solicitação. Tente novamente. Informar id do pedido e id do usuario';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$pedido = $this->Pedido->find('first', array(
+
+			'conditions' => array(			
+				'Pedido.id' => $this->request->data['id_pedido'], 
+				'Pedido.cliente_id' => $this->request->data['id_cliente'],
+				'Pedido.usuario_id' => $this->request->data['id_usuario']
+				)
+		));
+		
+		if(empty($pedido['Pedido']['id']))
+		{
+			$this->Message = 'Ocorreu um erro na sua solicitação. Tente novamente (Pedido não encontrado)';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+		
+		$this->loadModel('Produto');
+		foreach ($pedido['PedidoProduto'] as $key => $array) 
+		{
+			$produto = $this->Produto->find('first', array(
+
+				'conditions'=>array(
+					'Produto.id' => $array['produto_id']
+					)
+			));
+
+			$pedido['produtos'][] = $produto;
+		}
+		
+		$this->DadosArray = $pedido;
+		$this->EncodeReturn();
+	}
+
 /**
  * add method
  *
@@ -87,7 +129,7 @@ class PedidosController extends AppController {
 					'estado'=>$CartSession['endereco']['estado'],
 					'complemento'=>$CartSession['endereco']['complemento'],
 					'cep'=>$CartSession['endereco']['cep'],
-					'situacao_pedido_id'=>1,
+					'situacao_pedido_id'=>2,
 					'forma_pagamento_id'=> $this->request->data['tipo_pagamento'],
 					'troco' => $troco,
 					'maquina' => $maquina,
@@ -95,7 +137,8 @@ class PedidosController extends AppController {
 					'valor_cep' => $CartSession['valor_cep'],
 					'valor_taxa' => $valor_percentual,
 					'valor_total' => $valor_total,
-					'valor_total_taxas' => $valor_total_taxas
+					'valor_total_taxas' => $valor_total_taxas,
+					'cliente_id' => $this->request->data['cliente_id']
 				));
 
 		if ($this->request->is('post')) 
@@ -141,6 +184,7 @@ class PedidosController extends AppController {
 			}
 
 			$this->Message = 'Pedido realizado com sucesso';
+			$this->DadosArray['pedido_id'] = $pedido_id;
 			$this->EncodeReturn();		
 		}	
 	}
