@@ -25,6 +25,24 @@ class ClientesController extends AppController {
 		$this->set('clientes', $this->Paginator->paginate());
 	}
 
+	##verifica se pizzaria esta aberta ou fechada
+	public function open_close()
+	{
+
+		$this->Cliente->unbindModel(array('belongsTo' => array('UsuarioSabore', 'Mensalidade', 'Situacao')));		
+		$this->Cliente->unbindModel(array('hasMany' => array('Categoria')));		
+		$open = $this->Cliente->find('first', array(
+			'conditions' => array(
+				'Cliente.id' => $this->request->data['id_cliente']
+
+				),
+			'fields' => array('Cliente.open')
+		));
+		
+		$this->DadosArray = $open;
+		$this->EncodeReturn();
+	}
+
 	##buscando dados a partir de dominio
 	public function find_dominio()
 	{	
@@ -74,6 +92,9 @@ class ClientesController extends AppController {
 
 			$this->DadosArray['CategoriaArray'] = $categorias;	
 		}
+
+		$banner = $this->Cliente->query(sprintf("SELECT * FROM cliente_banners where id_cliente = %d", $this->DadosArray['Cliente']['id']));
+		$this->DadosArray['banner_info'] = $banner;
 		
 		$this->EncodeReturn();		
 	}
