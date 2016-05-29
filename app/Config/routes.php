@@ -55,6 +55,7 @@
 	##pedidos
 	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));
 	Router::connect('/pedidos/validar', array('controller' => 'pedidos', 'action' => 'find'));
+	Router::connect('/pedidos/acompanhamento', array('controller' => 'pedidos', 'action' => 'accompaniment'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

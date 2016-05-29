@@ -145,7 +145,7 @@ class PedidosController extends AppController {
 		{
 			$this->Pedido->create();
 			if ($this->Pedido->save($POST)) 
-			{
+			{				
 				$pedido_id = $this->Pedido->getLastInsertId();				
 				$this->loadModel('PedidoProduto');
 
@@ -177,7 +177,7 @@ class PedidosController extends AppController {
 				}
 			} 
 			else 
-			{	
+			{					
 				$this->Message = 'Ocorreu um Erro na geração do pedido';								
 				$this->Return = false;
 				$this->EncodeReturn();		
@@ -187,6 +187,17 @@ class PedidosController extends AppController {
 			$this->DadosArray['pedido_id'] = $pedido_id;
 			$this->EncodeReturn();		
 		}	
+	}
+
+
+	public function accompaniment()
+	{			
+		##buscando status do pedido
+		$status = $this->Pedido->query(
+				sprintf("Select descricao FROM situacao_pedidos where id = (Select situacao_pedido_id FROM pedidos where id = %d LIMIT 1)", $this->request->data['pedido_id']));
+		
+		$this->DadosArray['status'] = $status[0]['situacao_pedidos']['descricao'];
+		$this->EncodeReturn();	
 	}
 
 /**

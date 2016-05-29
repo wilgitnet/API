@@ -42,17 +42,7 @@ class Usuario extends AppModel {
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
-		),		
-		'documento' => array(
-			'notBlank' => array(
-				'rule' => array('isUnique'),
-				'message' => 'Documento já esta em uso',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
+		),				
 		'email' => array(
 			'notBlank' => array(
 				'rule' => array('isUnique'),
