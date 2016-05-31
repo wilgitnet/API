@@ -514,18 +514,25 @@ class ProdutosController extends AppController {
  * @return void
  */
 	public function add() {		
-		if ($this->request->is('post')) {
+		if ($this->request->is('post')) 
+		{			
+			unset($this->request->data['TokenRequest']);			
+			$POST = array('Produto'=>$this->request->data);			
 			$this->Produto->create();
-			if ($this->Produto->save($this->request->data)) {
-				$this->Flash->success(__('The produto has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The produto could not be saved. Please, try again.'));
+
+			if ($this->Produto->save($POST)) 
+			{
+				$this->Message = 'Produto cadastrado com sucesso';
+				$this->Return = true;
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um Erro no seu cadastro de produto';								
+				$this->Return = false;
 			}
 		}
-		$situacaos = $this->Produto->Situacao->find('list');
-		$classes = $this->Produto->Classe->find('list');
-		$this->set(compact('situacaos', 'classes'));
+
+		$this->EncodeReturn();	
 	}
 
 /**

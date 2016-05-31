@@ -51,6 +51,7 @@
 	Router::connect('/produtos/broto', array('controller' => 'produtos', 'action' => 'half'));
 	Router::connect('/produtos/borda', array('controller' => 'produtos', 'action' => 'edge'));
 	Router::connect('/produtos/validar-pedido', array('controller' => 'produtos', 'action' => 'valid_purchase'));
+	Router::connect('/produtos/cadastrar', array('controller' => 'produtos', 'action' => 'add'));
 
 	##pedidos
 	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));
