@@ -56,6 +56,11 @@
 	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));
 	Router::connect('/pedidos/validar', array('controller' => 'pedidos', 'action' => 'find'));
 	Router::connect('/pedidos/acompanhamento', array('controller' => 'pedidos', 'action' => 'accompaniment'));
+	Router::connect('/pedidos/buscar', array('controller' => 'pedidos', 'action' => 'search'));
+
+
+	##categorias
+	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

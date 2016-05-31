@@ -82,6 +82,46 @@ class PedidosController extends AppController {
 		$this->EncodeReturn();
 	}
 
+	public function search()
+	{
+		$PedidosArray = array();
+		if(empty($this->request->data['id_usuario']))
+		{
+			$this->Message = 'Ocorreu um erro na sua solicitação. Tente novamente (Usuário não encontrado)';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$pedidos = $this->Pedido->find('all', array(
+			'conditions' => array(							
+				'Pedido.cliente_id' => $this->request->data['id_cliente'],
+				'Pedido.usuario_id' => $this->request->data['id_usuario']				
+				),
+			'order' => "Pedido.id DESC"
+		));
+		
+		$this->loadModel('Produto');
+		foreach($pedidos as $pedido)
+		{
+			foreach ($pedido['PedidoProduto'] as $key => $array) 
+			{
+				$produto = $this->Produto->find('first', array(
+
+				'conditions'=>array(
+					'Produto.id' => $array['produto_id']
+					)
+				));
+
+				$pedido['produtos'][] = $produto;
+			}
+			
+			$PedidosArray[]	= $pedido;
+		}
+
+		$this->DadosArray = $PedidosArray;
+		$this->EncodeReturn();
+	}
+
 /**
  * add method
  *
@@ -122,6 +162,7 @@ class PedidosController extends AppController {
 		$POST = array('Pedido'=>array(
 					'data_pedido'=>date('Y/m/d h:i:s'),
 					'usuario_id'=>$CartSession['usuario_id'],
+					'acompanhamento'=>'S',
 					'endereco'=>$CartSession['endereco']['endereco'],
 					'numero'=>$CartSession['endereco']['numero'],
 					'bairro'=>$CartSession['endereco']['bairro'],
