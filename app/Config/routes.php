@@ -62,6 +62,10 @@
 
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));
+	Router::connect('/categoria/editar', array('controller' => 'categorias', 'action' => 'edit'));
+	Router::connect('/categoria/listar', array('controller' => 'categorias', 'action' => 'find'));
+	Router::connect('/categoria/buscar', array('controller' => 'categorias', 'action' => 'find_first'));
+	Router::connect('/categoria/excluir', array('controller' => 'categorias', 'action' => 'delete'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

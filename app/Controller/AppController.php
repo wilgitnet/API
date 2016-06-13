@@ -72,7 +72,7 @@ class AppController extends Controller
 
 	##trata dados para retorno de api
 	public function EncodeReturn()
-	{	
+	{			
 		$Array = array('message'=>$this->Message, 'success'=>$this->Return, 'request'=>$this->RequestReturn, 'dados'=>$this->DadosArray, 'message_array'=>$this->MessageArray);
 		$Json = json_encode($Array);
 		echo $Json;
