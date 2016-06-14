@@ -26,7 +26,7 @@ class ProdutosController extends AppController {
 		##realizar aqui busca por produtos em destaque
 		$this->Produto->unbindModel(array('belongsTo' => array('Categoria', 'Situacao')));				
 		$destaques = $this->Produto->find('all', array(			
-		    'conditions' => array(		        
+		    	'conditions' => array(		        
 		        'Produto.categoria_id' => $this->request->data['categoria_id'],
 		        'Produto.destaque' => 'S',
 		        'Produto.situacao_id' => $this->SituacaoOK

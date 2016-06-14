@@ -101,7 +101,10 @@ class CategoriasController extends AppController {
 			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
 			unset($this->request->data['TokenRequest']);			
 			
-			$this->ValidarQtdCategoria($this->request->data['cliente_id']);
+			if ($this->request->data['principal']=='S') {
+				$this->ValidarQtdCategoria($this->request->data['cliente_id']);
+			}
+			
 
 			##preparando dados para cadastrar Categoria = Nome da model			
 			$POST = array('Categoria'=>$this->request->data);				
@@ -134,29 +137,32 @@ class CategoriasController extends AppController {
  */
 	public function edit() {			
 
-		##variavel que vai receber os dados para enviar p/ banco de dados
+			##variavel que vai receber os dados para enviar p/ banco de dados
 		$POST = array();
 
-		##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
 		unset($this->request->data['TokenRequest']);	
+		if ($this->request->data['principal']=='S') {
+			$this->ValidarQtdCategoria($this->request->data['cliente_id'], $this->request->data['id']);
+		}
+		if ($this->request->data['principal']=='N') {
+			$this->ValidarQtdCategoria($this->request->data['cliente_id'], $this->request->data['id']);
+		}
 
-		$this->ValidarQtdCategoria($this->request->data['cliente_id'], $this->request->data['id']);
-
-		##preparando dados para cadastrar Categoria = Nome da model			
+			##preparando dados para cadastrar Categoria = Nome da model			
 		$POST = array('Categoria'=>$this->request->data);	
-
 		if ($this->Categoria->save($POST)) 
 		{
 			$this->Message = 'Categoria editada com sucesso';
 			$this->Return = true;	
 		} 
+
 		else 
 		{
 			$this->Message = 'Ocorreu um erro na edição de sua categoria.';
 			$this->Return = false;	
 		}
-		
-		
+
 		$this->EncodeReturn();	
 	}
 
@@ -232,6 +238,12 @@ class CategoriasController extends AppController {
 		if($QtdeCategoriaPrincipal > 0)
 		{
 			$this->Message = 'Ops, você já tem uma categoria cadastrada no sistema como principal';
+			$this->Return = false;
+			$this->EncodeReturn();					
+		}
+		if($QtdeCategoriaPrincipal = 0)
+		{
+			$this->Message = 'Ops, você tem que ter uma categoria cadastrada no sistema como principal';
 			$this->Return = false;
 			$this->EncodeReturn();					
 		}
