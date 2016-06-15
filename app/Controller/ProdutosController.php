@@ -1,5 +1,5 @@
 <?php
-App::uses('AppController', 'Controller');
+App::uses('AppController', 'Controller'); 
 /**
  * Produtos Controller
  *
@@ -508,6 +508,45 @@ class ProdutosController extends AppController {
 	}
 
 
+	public function list()
+	{
+		$produtos = array();
+
+		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$produtos = $this->Produto->find('all', 
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+						)
+					)
+			);
+
+		$this->DadosArray = $produtos;
+		$this->EncodeReturn();
+	}
+
+public function find_first()
+	{
+		$produtos = array();
+
+		$this->Produto->unbindModel(array('belongsTo' => array()));				
+		##se não foi enviado id retorna erro
+		if(empty($this->request->data['id']))
+		{
+			$this->Message = 'ID de produto não foi informado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$produtos = $this->Produto->find('first', array(
+			'conditions' => array(
+					'Produto.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $produtos;
+		$this->EncodeReturn();
+	}
 /**
  * add method
  *
@@ -561,6 +600,60 @@ class ProdutosController extends AppController {
 		$classes = $this->Produto->Classe->find('list');
 		$this->set(compact('situacaos', 'classes'));
 	}
+/*
+
+	public function editar() {			
+			##variavel que vai receber os dados para enviar p/ banco de dados
+		$POST = array();
+
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);	
+		$this->request->data['cliente_id'], $this->request->data['id'];
+			##preparando dados para cadastrar Categoria = Nome da model			
+		$POST = array('Produto'=>$this->request->data);	
+		if ($this->Produto->save($POST)) 
+		{
+			$this->Message = 'Categoria editada com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição de sua categoria.';
+			$this->Return = false;	
+		}
+
+		$this->EncodeReturn();	
+	}
+*/
+
+	public function editar() {			
+
+			##variavel que vai receber os dados para enviar p/ banco de dados
+		$POST = array();
+
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);	
+
+	
+			##preparando dados para cadastrar Categoria = Nome da model		
+		$this->request->data['cliente_id']; 
+		$this->request->data['id'];
+		$POST = array('Produto'=>$this->request->data);	
+		if ($this->Produto->save($POST)) 
+		{
+			$this->Message = 'teste editada com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição de sua categoria.';
+			$this->Return = false;	
+		}
+
+		$this->EncodeReturn();	
+	}
 
 /**
  * delete method
@@ -582,4 +675,41 @@ class ProdutosController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+/**
+ * delete method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function remove() {
+
+		$this->Produto->id = $this->request->data['id'];
+
+		##verifica se categoria existe
+		if (!$this->Produto->exists()) 
+		{
+			$this->Message = 'Produto não existe';
+			$this->Return = false;
+		}
+
+		$this->request->allowMethod('post', 'delete');
+
+		##faz o delete
+		if ($this->Produto->delete()) 
+		{
+			$this->Message = 'Produto excluido com sucesso';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do produto';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
+
+
 }
+
