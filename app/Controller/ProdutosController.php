@@ -635,20 +635,16 @@ public function find_first()
 			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
 		unset($this->request->data['TokenRequest']);	
 
-	
-			##preparando dados para cadastrar Categoria = Nome da model		
-		$this->request->data['cliente_id']; 
-		$this->request->data['id'];
 		$POST = array('Produto'=>$this->request->data);	
 		if ($this->Produto->save($POST)) 
 		{
-			$this->Message = 'teste editada com sucesso';
+			$this->Message = 'Produto editado com sucesso';
 			$this->Return = true;	
 		} 
 
 		else 
 		{
-			$this->Message = 'Ocorreu um erro na edição de sua categoria.';
+			$this->Message = 'Ocorreu um erro na edição de seu produto.';
 			$this->Return = false;	
 		}
 
