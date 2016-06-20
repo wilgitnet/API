@@ -1,6 +1,6 @@
 <?php
 /**
- * Routes configuration
+ * Routes configuration 
  *
  * In this file, you set up routes to your controllers and their actions.
  * Routes are very important mechanism that allows you to freely connect
@@ -71,6 +71,9 @@
 	Router::connect('/categoria/listar', array('controller' => 'categorias', 'action' => 'find'));
 	Router::connect('/categoria/buscar', array('controller' => 'categorias', 'action' => 'find_first'));
 	Router::connect('/categoria/excluir', array('controller' => 'categorias', 'action' => 'delete'));
+
+	##clientes
+	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'))
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
