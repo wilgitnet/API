@@ -600,32 +600,6 @@ public function find_first()
 		$classes = $this->Produto->Classe->find('list');
 		$this->set(compact('situacaos', 'classes'));
 	}
-/*
-
-	public function editar() {			
-			##variavel que vai receber os dados para enviar p/ banco de dados
-		$POST = array();
-
-			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
-		unset($this->request->data['TokenRequest']);	
-		$this->request->data['cliente_id'], $this->request->data['id'];
-			##preparando dados para cadastrar Categoria = Nome da model			
-		$POST = array('Produto'=>$this->request->data);	
-		if ($this->Produto->save($POST)) 
-		{
-			$this->Message = 'Categoria editada com sucesso';
-			$this->Return = true;	
-		} 
-
-		else 
-		{
-			$this->Message = 'Ocorreu um erro na edição de sua categoria.';
-			$this->Return = false;	
-		}
-
-		$this->EncodeReturn();	
-	}
-*/
 
 	public function editar() {			
 
