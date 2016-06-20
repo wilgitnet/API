@@ -1,6 +1,6 @@
 <?php
 /**
- * Routes configuration 
+ * Routes configuration
  *
  * In this file, you set up routes to your controllers and their actions.
  * Routes are very important mechanism that allows you to freely connect
@@ -43,6 +43,11 @@
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));
 
+	##Rotas de Usuario_sabore
+	Router::connect('/usuario_sabore/cadastrar', array('controller' => 'UsuarioSabores', 'action' => 'cadastrar'));
+	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'list'));
+	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
+	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
@@ -76,7 +81,7 @@
 	Router::connect('/categoria/excluir', array('controller' => 'categorias', 'action' => 'delete'));
 
 	##clientes
-	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'))
+	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
