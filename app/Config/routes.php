@@ -32,6 +32,9 @@
 	Router::connect('/cliente/buscar', array('controller' => 'clientes', 'action' => 'find'));
 	Router::connect('/cliente/cep', array('controller' => 'clientes', 'action' => 'find_cep'));
 	Router::connect('/cliente/open-close', array('controller' => 'clientes', 'action' => 'open_close'));
+	Router::connect('/cliente/editar', array('controller' => 'clientes', 'action' => 'editar'));
+	Router::connect('/cliente/find_first', array('controller' => 'clientes', 'action' => 'find_first'));
+	Router::connect('/cliente/cadastrar', array('controller' => 'clientes', 'action' => 'cadastrar'));
 
 	##rotas de usuario
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));

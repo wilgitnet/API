@@ -99,7 +99,28 @@ class ClientesController extends AppController {
 		$this->EncodeReturn();		
 	}
 
+	public function find_first()
+	{
+		$clientes = array();
 
+		$this->Cliente->unbindModel(array('belongsTo' => array()));				
+		##se não foi enviado id retorna erro
+		if(empty($this->request->data['id']))
+		{
+			$this->Message = 'ID de cliente não foi informado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$clientes = $this->Cliente->find('first', array(
+			'conditions' => array(
+					'Cliente.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $clientes;
+		$this->EncodeReturn();
+	}
 	##buscando dados de cliente
 	public function find()
 	{				
@@ -251,7 +272,56 @@ class ClientesController extends AppController {
 		$situacaos = $this->Cliente->Situacao->find('list');
 		$this->set(compact('mensalidades', 'usuarioSabores', 'situacaos'));
 	}
+/**
+ * add method
+ *
+ * @return void
+ */
+	public function cadastrar() {		
+		if ($this->request->is('post')) 
+		{			
+			unset($this->request->data['TokenRequest']);			
+			$POST = array('Cliente'=>$this->request->data);			
+			$this->Cliente->create();
 
+			if ($this->Cliente->save($POST)) 
+			{
+				$this->Message = 'Textos cadastrados com sucesso';
+				$this->Return = true;
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um Erro no seu cadastro de texto';								
+				$this->Return = false;
+			}
+		}
+
+		$this->EncodeReturn();	
+	}
+
+	public function editar() {			
+
+			##variavel que vai receber os dados para enviar p/ banco de dados
+		$POST = array();
+
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);	
+
+		$POST = array('Cliente'=>$this->request->data);	
+		if ($this->Cliente->save($POST)) 
+		{
+			$this->Message = 'Texto editado com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição de seu Texto.';
+			$this->Return = false;	
+		}
+
+		$this->EncodeReturn();	
+	}
 /**
  * edit method
  *
