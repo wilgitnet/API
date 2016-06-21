@@ -1,5 +1,5 @@
 <?php
-App::uses('AppController', 'Controller');
+App::uses('AppController', 'Controller'); 
 /**
  * Clientes Controller
  *
@@ -151,6 +151,19 @@ class ClientesController extends AppController {
 
 		$this->EncodeReturn();		
 	}
+
+	public function read()
+	{
+		$clientes = array();
+
+		$this->loadModel('Usuario');
+		$clientes = $this->Usuario->find('all');
+
+		$this->DadosArray = $clientes;
+		$this->EncodeReturn();
+
+	}
+
 
 	##funcao para buscar cep
 	public function find_cep()
