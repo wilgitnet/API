@@ -49,14 +49,103 @@ class UsuarioSaboresController extends AppController {
 		if ($this->request->is('post')) {
 			$this->UsuarioSabore->create();
 			if ($this->UsuarioSabore->save($this->request->data)) {
-				$this->Flash->success(__('The usuario sabore has been saved.'));
+				$this->Flash->success(__('Usuário Cadastrado com sucesso'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
-				$this->Flash->error(__('The usuario sabore could not be saved. Please, try again.'));
+				$this->Flash->error(__('O usuario não pode ser cadastrado.'));
 			}
 		}
 	}
 
+	public function cadastrar() {		
+		if ($this->request->is('post')) 
+		{			
+			unset($this->request->data['TokenRequest']);			
+			$POST = array('UsuarioSabore'=>$this->request->data);			
+			$this->UsuarioSabore->create();
+
+			if ($this->UsuarioSabore->save($POST)) 
+			{
+				$this->Message = 'Usuario cadastrado com sucesso';
+				$this->Return = true;
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um Erro no seu cadastro de Usuario';								
+				$this->Return = false;
+			}
+		}
+
+		$this->EncodeReturn();	
+	}
+	public function find_first()
+	{
+		$usuariosabore = array();
+
+		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				
+		##se não foi enviado id retorna erro
+		if(empty($this->request->data['id']))
+		{
+			$this->Message = 'ID de usuario não foi informado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$usuariosabore = $this->UsuarioSabore->find('first', array(
+			'conditions' => array(
+					'UsuarioSabore.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $usuariosabore;
+		$this->EncodeReturn();
+	}
+
+
+	public function list() 
+		{
+		$usuariosabore = array();
+
+		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$usuariosabore = $this->UsuarioSabore->find('all', 
+
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+						)
+					)
+			);
+
+		$this->DadosArray = $usuariosabore;
+		$this->EncodeReturn();
+	}
+		public function deletar() {
+
+		$this->UsuarioSabore->id = $this->request->data['id'];
+
+		##verifica se categoria existe
+		if (!$this->UsuarioSabore->exists()) 
+		{
+			$this->Message = 'Usuario não existe';
+			$this->Return = false;
+		}
+
+		$this->request->allowMethod('post', 'delete');
+
+		##faz o delete
+		if ($this->UsuarioSabore->delete()) 
+		{
+			$this->Message = 'Usuário excluido com sucesso';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do usuario';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
 /**
  * edit method
  *
@@ -64,41 +153,30 @@ class UsuarioSaboresController extends AppController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
-		if (!$this->UsuarioSabore->exists($id)) {
-			throw new NotFoundException(__('Invalid usuario sabore'));
+public function editar() {			
+
+			##variavel que vai receber os dados para enviar p/ banco de dados
+		$POST = array();
+
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);	
+
+		$POST = array('UsuarioSabore'=>$this->request->data);	
+		if ($this->UsuarioSabore->save($POST)) 
+		{
+			$this->Message = 'Usuario editado com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição de seu Usuario.';
+			$this->Return = false;	
 		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->UsuarioSabore->save($this->request->data)) {
-				$this->Flash->success(__('The usuario sabore has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The usuario sabore could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('UsuarioSabore.' . $this->UsuarioSabore->primaryKey => $id));
-			$this->request->data = $this->UsuarioSabore->find('first', $options);
-		}
+
+		$this->EncodeReturn();	
 	}
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		$this->UsuarioSabore->id = $id;
-		if (!$this->UsuarioSabore->exists()) {
-			throw new NotFoundException(__('Invalid usuario sabore'));
-		}
-		$this->request->allowMethod('post', 'delete');
-		if ($this->UsuarioSabore->delete()) {
-			$this->Flash->success(__('The usuario sabore has been deleted.'));
-		} else {
-			$this->Flash->error(__('The usuario sabore could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}
+
+
 }

@@ -93,17 +93,13 @@ class CategoriasController extends AppController {
 		##variavel que vai receber os dados para enviar p/ banco de dados
 		$POST = array();
 
-		$QtdeCategoriaPrincipal = 0;
 
 		##verificando se post com dados do admin foram informados
 		if ($this->request->is('post')) 
 		{							
 			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
 			unset($this->request->data['TokenRequest']);			
-			
-			if ($this->request->data['principal']=='S') {
-				$this->ValidarQtdCategoria($this->request->data['cliente_id']);
-			}
+			$this->request->data['cliente_id']);
 			
 
 			##preparando dados para cadastrar Categoria = Nome da model			

@@ -47,6 +47,7 @@ class ProdutosController extends AppController {
 		    ),		    
 		));	
 
+
 		##obrigatorio ter no minimo 6 produtos cadastrados
 		if(count($aleatorios) < $restQtd)
 		{
@@ -615,7 +616,6 @@ public function find_first()
 			$this->Message = 'Produto editado com sucesso';
 			$this->Return = true;	
 		} 
-
 		else 
 		{
 			$this->Message = 'Ocorreu um erro na edição de seu produto.';

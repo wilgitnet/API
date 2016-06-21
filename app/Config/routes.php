@@ -43,6 +43,12 @@
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));
 
+	##Rotas de Usuario_sabore
+	Router::connect('/usuario_sabore/cadastrar', array('controller' => 'UsuarioSabores', 'action' => 'cadastrar'));
+	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'list'));
+	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
+	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
+	Router::connect('/usuario_sabore/find_first', array('controller' => 'UsuarioSabores', 'action' => 'find_first'));
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
@@ -74,6 +80,7 @@
 	Router::connect('/categoria/listar', array('controller' => 'categorias', 'action' => 'find'));
 	Router::connect('/categoria/buscar', array('controller' => 'categorias', 'action' => 'find_first'));
 	Router::connect('/categoria/excluir', array('controller' => 'categorias', 'action' => 'delete'));
+	Router::connect('/categoria/find_categoria', array('controller' => 'categorias', 'action' => 'find_categoria'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
