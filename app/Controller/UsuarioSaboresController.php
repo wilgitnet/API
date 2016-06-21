@@ -102,8 +102,8 @@ class UsuarioSaboresController extends AppController {
 	}
 
 
-	public function list() 
-		{
+	public function find_list() 
+	{
 		$usuariosabore = array();
 
 		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				
@@ -119,7 +119,8 @@ class UsuarioSaboresController extends AppController {
 		$this->DadosArray = $usuariosabore;
 		$this->EncodeReturn();
 	}
-		public function deletar() {
+	
+	public function deletar() {
 
 		$this->UsuarioSabore->id = $this->request->data['id'];
 

@@ -50,7 +50,7 @@
 
 	##Rotas de Usuario_sabore
 	Router::connect('/usuario_sabore/cadastrar', array('controller' => 'UsuarioSabores', 'action' => 'cadastrar'));
-	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'list'));
+	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'find_list'));
 	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
 	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
 	Router::connect('/usuario_sabore/find_first', array('controller' => 'UsuarioSabores', 'action' => 'find_first'));
