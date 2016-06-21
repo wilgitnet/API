@@ -13,7 +13,7 @@ class ClientesController extends AppController {
  *
  * @var array
  */
-	public $components = array('Email');
+	public $components = array('Email'); 
 
 /**
  * index method
@@ -370,4 +370,139 @@ class ClientesController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+
+
+/**
+ * create method
+ *
+ * @return void
+ */
+	public function banner_add(){
+
+		$POST = array();
+
+		
+		if ($this->request->is('post')) 
+		{							
+			
+			unset($this->request->data['TokenRequest']);			
+
+			$this->loadModel('ClienteBanner');
+
+			$POST = array('ClienteBanner'=>$this->request->data);	
+
+			$this->ClienteBanner->create();	
+			if ($this->ClienteBanner->save($POST)) 
+			{
+				$this->Message = 'Banner cadastrado com sucesso!';
+				$this->Return = true;
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um erro no cadastro do banner.';								
+				$this->Return = false;
+			}
+		}
+
+		$this->EncodeReturn();	
+	}
+
+
+
+/**
+ * read method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+
+	public function banner_list(){
+
+		$banners = array();
+		$this->loadModel('ClienteBanner');
+		$banners = $this->ClienteBanner->find('all');
+
+		$this->DadosArray = $banners;
+		$this->EncodeReturn();
+	}
+
+
+	public function banner_find(){
+
+		$banner = array();
+
+		$this->loadModel('ClienteBanner');
+		$banner = $this->ClienteBanner->find('first', array(
+			'conditions' => array(
+					'ClienteBanner.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $banner;
+		$this->EncodeReturn();
+	}
+
+
+
+/**
+ * update method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function banner_edit() {			
+
+		$POST = array();
+
+		unset($this->request->data['TokenRequest']);
+
+		$this->loadModel('ClienteBanner');
+			
+		$POST = array('ClienteBanner'=>$this->request->data);	
+		if ($this->ClienteBanner->save($POST)) 
+		{
+			$this->Message = 'Banner editado com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição do Banner.';
+			$this->Return = false;	
+		}
+
+		$this->EncodeReturn();	
+	}
+
+
+/**
+ * delete method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function banner_delete(){
+
+		$this->loadModel('ClienteBanner');
+		$this->ClienteBanner->id = $this->request->data['id'];
+		$this->request->allowMethod('post', 'delete');		
+
+		if ($this->ClienteBanner->delete()) 
+		{
+			$this->Message = 'Banner excluído com sucesso!';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do Banner';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
+
+
 }
