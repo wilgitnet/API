@@ -1,6 +1,6 @@
 <?php
 App::uses('AppController', 'Controller'); 
-/**
+/** 
  * Categorias Controller
  *
  * @property Categoria $Categoria

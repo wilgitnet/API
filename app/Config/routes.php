@@ -23,7 +23,7 @@
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file
- * to use (in this case, /app/View/Pages/home.ctp)...
+ * to use (in this case, /app/View/Pages/home.ctp)... 
  */
 	
 
@@ -35,6 +35,11 @@
 	Router::connect('/cliente/editar', array('controller' => 'clientes', 'action' => 'editar'));
 	Router::connect('/cliente/find_first', array('controller' => 'clientes', 'action' => 'find_first'));
 	Router::connect('/cliente/cadastrar', array('controller' => 'clientes', 'action' => 'cadastrar'));
+	Router::connect('/cliente/banner-listar', array('controller' => 'clientes', 'action' => 'banner_list'));
+	Router::connect('/cliente/banner-cadastrar', array('controller' => 'clientes', 'action' => 'banner_add'));
+	Router::connect('/cliente/banner-deletar', array('controller' => 'clientes', 'action' => 'banner_delete'));
+	Router::connect('/cliente/banner-buscar', array('controller' => 'clientes', 'action' => 'banner_find'));
+	Router::connect('/cliente/banner-editar', array('controller' => 'clientes', 'action' => 'banner_edit'));
 
 	##rotas de usuario
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
@@ -82,6 +87,7 @@
 
 	##clientes
 	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'));
+
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
