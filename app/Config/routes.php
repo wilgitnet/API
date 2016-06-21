@@ -67,7 +67,7 @@
 	Router::connect('/produtos/borda', array('controller' => 'produtos', 'action' => 'edge'));
 	Router::connect('/produtos/validar-pedido', array('controller' => 'produtos', 'action' => 'valid_purchase'));
 	Router::connect('/produtos/cadastrar', array('controller' => 'produtos', 'action' => 'add'));
-	Router::connect('/produtos/listar', array('controller' => 'produtos', 'action' => 'list'));
+	Router::connect('/produtos/listar', array('controller' => 'produtos', 'action' => 'find_list'));
 	Router::connect('/produtos/remover', array('controller' => 'produtos', 'action' => 'remove'));
 	Router::connect('/produtos/editar', array('controller' => 'produtos', 'action' => 'editar'));
 	Router::connect('/produtos/search', array('controller' => 'produtos', 'action' => 'find_first'));

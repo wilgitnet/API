@@ -509,7 +509,7 @@ class ProdutosController extends AppController {
 	}
 
 
-	public function list()
+	public function find_list()
 	{
 		$produtos = array();
 
@@ -526,7 +526,7 @@ class ProdutosController extends AppController {
 		$this->EncodeReturn();
 	}
 
-public function find_first()
+	public function find_first()
 	{
 		$produtos = array();
 
