@@ -37,7 +37,7 @@ class UsuariosController extends AppController {
 
 		$this->EncodeReturn();		
 	}
-
+	
 	##realizando login de usuario
 	public function login()
 	{		

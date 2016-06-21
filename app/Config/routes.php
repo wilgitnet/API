@@ -53,6 +53,8 @@
 	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'list'));
 	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
 	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
+	Router::connect('/usuario_sabore/find_first', array('controller' => 'UsuarioSabores', 'action' => 'find_first'));
+
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
@@ -84,6 +86,7 @@
 	Router::connect('/categoria/listar', array('controller' => 'categorias', 'action' => 'find'));
 	Router::connect('/categoria/buscar', array('controller' => 'categorias', 'action' => 'find_first'));
 	Router::connect('/categoria/excluir', array('controller' => 'categorias', 'action' => 'delete'));
+	Router::connect('/categoria/find_categoria', array('controller' => 'categorias', 'action' => 'find_categoria'));
 
 	##clientes
 	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'));
