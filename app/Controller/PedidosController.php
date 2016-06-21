@@ -32,14 +32,45 @@ class PedidosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	public function list($id = null) {
 		if (!$this->Pedido->exists($id)) {
 			throw new NotFoundException(__('Invalid pedido'));
 		}
 		$options = array('conditions' => array('Pedido.' . $this->Pedido->primaryKey => $id));
 		$this->set('pedido', $this->Pedido->find('first', $options));
 	}
+	public function listar()
+	{
+		
+		$pedido = array();
 
+		$this->Pedido->unbindModel(array());				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$pedido = $this->Pedido->find('all', 
+				array(							
+					$this->request->data['cliente_id'],
+					)
+			);
+
+
+		$this->DadosArray = $pedido;
+		$this->EncodeReturn();
+	}
+	public function listar_detalhes()
+	{
+		
+		$pedido = array();
+
+		$this->Pedido->unbindModel(array());				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$pedido = $this->Pedido->find('first', array(
+			'conditions' => array(
+					'Pedido.id' => $this->request->data['id']
+				)
+		));
+		$this->DadosArray = $pedido;
+		$this->EncodeReturn();
+	}
 	public function find()
 	{		
 		if(empty($this->request->data['id_pedido']) || empty($_POST['id_usuario']))
