@@ -50,6 +50,21 @@ class PedidosController extends AppController {
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
+
+	public function view_request(){
+
+		$pedido = array();
+
+		$pedido = $this->Pedido->find('first', array(
+			'conditions' => array(
+					'Pedido.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $pedido;
+		$this->EncodeReturn();
+	}
+
 	public function listar_detalhes()
 	{
 		
@@ -314,24 +329,6 @@ class PedidosController extends AppController {
 			$this->Flash->error(__('The pedido could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(array('action' => 'index'));
-	}
-
-
-/**
- * read method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-
-	public function read(){
-
-		$pedidos = array();
-		//$pedidos = $this->Pedidos->find('all');
-
-		$this->DadosArray = $pedidos;
-		$this->EncodeReturn();
 	}
 
 

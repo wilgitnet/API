@@ -80,6 +80,7 @@
 	Router::connect('/pedidos/buscar', array('controller' => 'pedidos', 'action' => 'search'));
 	Router::connect('/pedidos/listar', array('controller' => 'pedidos', 'action' => 'listar'));
 	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
+	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
 
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));
