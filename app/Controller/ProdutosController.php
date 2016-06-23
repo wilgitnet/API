@@ -525,7 +525,20 @@ class ProdutosController extends AppController {
 		$this->DadosArray = $produtos;
 		$this->EncodeReturn();
 	}
+	public function find_cat()
+	{
+		$categorias = array();
+		$this->loadModel('Categoria');
+		$this->Categoria->unbindModel(array('belongsTo' => array('Cliente','Situacao')));
+		$categorias = $this->Categoria->find('all', array(
+			'conditions' => array(
+					'Categoria.situacao_id' => '1'
+				)
+		));
 
+		$this->DadosArray = $categorias;
+		$this->EncodeReturn();
+	}
 	public function find_first()
 	{
 		$produtos = array();
