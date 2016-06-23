@@ -40,13 +40,12 @@ class PedidosController extends AppController {
 
 		$this->Pedido->unbindModel(array());				
 		##monta array que verifica se já existe uma categoria cadastrada no sistema
-		$pedido = $this->Pedido->find('all', 
-				array(							
-					$this->request->data['cliente_id'],
-					)
-			);
-
-
+		$pedido = $this->Pedido->find('all', array(
+			'conditions' => array(
+					'Pedido.cliente_id' => $this->request->data['cliente_id'],
+					'Pedido.situacao_pedido_id'=> '7'
+				)
+		));
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
