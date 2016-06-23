@@ -71,7 +71,7 @@
 	Router::connect('/produtos/remover', array('controller' => 'produtos', 'action' => 'remove'));
 	Router::connect('/produtos/editar', array('controller' => 'produtos', 'action' => 'editar'));
 	Router::connect('/produtos/search', array('controller' => 'produtos', 'action' => 'find_first'));
-
+	Router::connect('/produtos/find_cat', array('controller' => 'produtos', 'action' => 'find_cat'));
 
 	##pedidos
 	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));

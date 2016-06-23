@@ -286,12 +286,12 @@ class ClientesController extends AppController {
 
 			if ($this->Cliente->save($POST)) 
 			{
-				$this->Message = 'Textos cadastrados com sucesso';
+				$this->Message = 'Cadastrado de dados obteve sucesso';
 				$this->Return = true;
 			} 
 			else 
 			{	
-				$this->Message = 'Ocorreu um Erro no seu cadastro de texto';								
+				$this->Message = 'Ocorreu um Erro no cadastro de dados';								
 				$this->Return = false;
 			}
 		}
@@ -310,13 +310,13 @@ class ClientesController extends AppController {
 		$POST = array('Cliente'=>$this->request->data);	
 		if ($this->Cliente->save($POST)) 
 		{
-			$this->Message = 'Texto editado com sucesso';
+			$this->Message = 'Edição de dados obteve sucesso';
 			$this->Return = true;	
 		} 
 
 		else 
 		{
-			$this->Message = 'Ocorreu um erro na edição de seu Texto.';
+			$this->Message = 'Ocorreu um erro durante a edição de dados.';
 			$this->Return = false;	
 		}
 
