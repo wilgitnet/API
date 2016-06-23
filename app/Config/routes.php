@@ -79,6 +79,7 @@
 	Router::connect('/pedidos/acompanhamento', array('controller' => 'pedidos', 'action' => 'accompaniment'));
 	Router::connect('/pedidos/buscar', array('controller' => 'pedidos', 'action' => 'search'));
 	Router::connect('/pedidos/listar', array('controller' => 'pedidos', 'action' => 'listar'));
+	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
 
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));

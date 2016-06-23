@@ -32,13 +32,7 @@ class PedidosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function list($id = null) {
-		if (!$this->Pedido->exists($id)) {
-			throw new NotFoundException(__('Invalid pedido'));
-		}
-		$options = array('conditions' => array('Pedido.' . $this->Pedido->primaryKey => $id));
-		$this->set('pedido', $this->Pedido->find('first', $options));
-	}
+	
 	public function listar()
 	{
 		
@@ -71,6 +65,7 @@ class PedidosController extends AppController {
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
+
 	public function find()
 	{		
 		if(empty($this->request->data['id_pedido']) || empty($_POST['id_usuario']))
@@ -320,4 +315,24 @@ class PedidosController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+
+
+/**
+ * read method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+
+	public function read(){
+
+		$pedidos = array();
+		//$pedidos = $this->Pedidos->find('all');
+
+		$this->DadosArray = $pedidos;
+		$this->EncodeReturn();
+	}
+
+
 }
