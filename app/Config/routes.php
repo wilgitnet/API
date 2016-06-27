@@ -92,7 +92,7 @@
 
 	##clientes
 	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'));
-
+	Router::connect('/clientes/deletando', array('controller' => 'clientes', 'action' => 'deletar'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

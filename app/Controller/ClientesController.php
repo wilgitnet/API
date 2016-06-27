@@ -98,7 +98,33 @@ class ClientesController extends AppController {
 		
 		$this->EncodeReturn();		
 	}
+	public function deletar() {
 
+		$this->Cliente->id = $this->request->data['id'];
+
+		##verifica se categoria existe
+		if (!$this->Cliente->exists()) 
+		{
+			$this->Message = 'Cliente não existe';
+			$this->Return = false;
+		}
+
+		$this->request->allowMethod('post', 'delete');
+
+		##faz o delete
+		if ($this->Cliente->delete()) 
+		{
+			$this->Message = 'Cliente excluido com sucesso';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do Cliente';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
 	public function find_first()
 	{
 		$clientes = array();
