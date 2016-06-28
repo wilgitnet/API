@@ -10,7 +10,7 @@ class PedidosController extends AppController {
 
 /**
  * Components
- *
+ * 
  * @var array
  */
 	public $components = array('Paginator');
@@ -50,6 +50,26 @@ class PedidosController extends AppController {
 		$this->EncodeReturn();
 	}
 
+	public function in_progress()
+	{
+		
+		$pedido = array();
+
+		$this->Pedido->unbindModel(array());				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$pedidos = $this->Pedido->find('all', array(
+			'conditions' => array(
+					'Pedido.cliente_id' => $this->request->data['cliente_id'],
+					'Pedido.situacao_pedido_id'=> '1'
+				)
+		));
+
+
+		$this->DadosArray = $pedidos;
+		$this->EncodeReturn();
+	}
+
+
 	public function view_request(){
 
 		$pedido = array();
@@ -60,9 +80,29 @@ class PedidosController extends AppController {
 				)
 		));
 
+		if(!empty($pedido['PedidoProduto']))
+		{
+			$this->loadModel('Produto');
+			$i = 0;
+			
+			foreach($pedido['PedidoProduto'] as $row)
+			{				
+				$produto = $this->Produto->find('first', array(
+					'conditions' => array(
+							'Produto.id' => $row['produto_id']
+						)
+				));
+				
+				$pedido['PedidoProduto'][$i]['dados_produto'] = $produto;
+				$i++;
+			}			
+
+		}
+		
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
+
 
 	public function listar_detalhes()
 	{

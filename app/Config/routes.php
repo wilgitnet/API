@@ -25,7 +25,7 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)... 
  */
-	
+	 
 
 	##rotas de cliente
 	Router::connect('/cliente/dominio', array('controller' => 'clientes', 'action' => 'find_dominio'));
@@ -79,6 +79,7 @@
 	Router::connect('/pedidos/acompanhamento', array('controller' => 'pedidos', 'action' => 'accompaniment'));
 	Router::connect('/pedidos/buscar', array('controller' => 'pedidos', 'action' => 'search'));
 	Router::connect('/pedidos/listar', array('controller' => 'pedidos', 'action' => 'listar'));
+	Router::connect('/pedidos/em-andamento', array('controller' => 'pedidos', 'action' => 'in_progress'));
 	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
 	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
 
