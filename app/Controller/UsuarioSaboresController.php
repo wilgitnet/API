@@ -107,14 +107,36 @@ class UsuarioSaboresController extends AppController {
 		$usuariosabore = array();
 
 		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				
-		##monta array que verifica se já existe uma categoria cadastrada no sistema
-		$usuariosabore = $this->UsuarioSabore->find('all', 
+
+		if(empty($this->request->data['search']))
+		{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
+			$usuariosabore = $this->UsuarioSabore->find('all', 
 
 				array('conditions' => array(							
 							 $this->request->data['cliente_id'],
 						)
 					)
 			);
+		}
+		else
+		{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
+			$usuariosabore = $this->UsuarioSabore->find('all', 
+
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+							 'OR' => array(
+							 		'UsuarioSabore.nome LIKE ' => "%{$this->request->data['search']}%",
+							 		'UsuarioSabore.login LIKE ' => "%{$this->request->data['search']}%",
+							 		'UsuarioSabore.documento LIKE ' => "%{$this->request->data['search']}%"
+							 	)
+						)
+					)
+			);				
+		}
+
+		
 
 		$this->DadosArray = $usuariosabore;
 		$this->EncodeReturn();
