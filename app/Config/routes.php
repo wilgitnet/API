@@ -82,6 +82,7 @@
 	Router::connect('/pedidos/em-andamento', array('controller' => 'pedidos', 'action' => 'in_progress'));
 	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
 	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
+	Router::connect('/pedidos/situacao', array('controller' => 'pedidos', 'action' => 'situation'));
 
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));

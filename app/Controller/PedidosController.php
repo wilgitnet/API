@@ -60,7 +60,9 @@ class PedidosController extends AppController {
 		$pedidos = $this->Pedido->find('all', array(
 			'conditions' => array(
 					'Pedido.cliente_id' => $this->request->data['cliente_id'],
-					'Pedido.situacao_pedido_id'=> '1'
+					'Pedido.situacao_pedido_id <>'=> '6',
+					'Pedido.situacao_pedido_id <>'=> '7',
+					'Pedido.situacao_pedido_id <>'=> '8'
 				)
 		));
 
@@ -84,9 +86,9 @@ class PedidosController extends AppController {
 		{
 			$this->loadModel('Produto');
 			$i = 0;
-			
+
 			foreach($pedido['PedidoProduto'] as $row)
-			{				
+			{								
 				$produto = $this->Produto->find('first', array(
 					'conditions' => array(
 							'Produto.id' => $row['produto_id']
@@ -103,6 +105,16 @@ class PedidosController extends AppController {
 		$this->EncodeReturn();
 	}
 
+
+	public function situation()
+	{
+		$situacao = array();
+		$this->loadModel('SituacaoPedido');
+		$this->SituacaoPedido->unbindModel(array('belongsTo' => array('Pedido')));
+		$situacao = $this->SituacaoPedido->find('all');
+		$this->DadosArray = $situacao;
+		$this->EncodeReturn();
+	}
 
 	public function listar_detalhes()
 	{
