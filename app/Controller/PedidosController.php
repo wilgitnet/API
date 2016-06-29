@@ -116,6 +116,25 @@ class PedidosController extends AppController {
 					'Pedido.id' => $this->request->data['id']
 				)
 		));
+		if(!empty($pedido['PedidoProduto']))
+		{
+			$this->loadModel('Produto');
+			$i = 0;
+			
+			foreach($pedido['PedidoProduto'] as $row)
+			{				
+				$produto = $this->Produto->find('first', array(
+					'conditions' => array(
+							'Produto.id' => $row['produto_id']
+						)
+				));
+				
+				$pedido['PedidoProduto'][$i]['dados_produto'] = $produto;
+				$i++;
+			}			
+
+		}
+		
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}

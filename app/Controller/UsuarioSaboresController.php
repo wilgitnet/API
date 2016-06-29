@@ -78,8 +78,7 @@ class UsuarioSaboresController extends AppController {
 
 		$this->EncodeReturn();	
 	}
-	public function find_first()
-	{
+	public function find_first(){
 		$usuariosabore = array();
 
 		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				
@@ -102,8 +101,7 @@ class UsuarioSaboresController extends AppController {
 	}
 
 
-	public function find_list() 
-	{
+	public function find_list() {
 		$usuariosabore = array();
 
 		$this->UsuarioSabore->unbindModel(array('belongsTo' => array('Cliente')));				

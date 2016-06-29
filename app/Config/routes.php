@@ -41,19 +41,19 @@
 	Router::connect('/cliente/banner-buscar', array('controller' => 'clientes', 'action' => 'banner_find'));
 	Router::connect('/cliente/banner-editar', array('controller' => 'clientes', 'action' => 'banner_edit'));
 
-	##rotas de usuario
+	##rotas de usuario 
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
 	Router::connect('/usuario/editar', array('controller' => 'usuarios', 'action' => 'edit'));
 	Router::connect('/usuario/login', array('controller' => 'usuarios', 'action' => 'login'));
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));
 
-	##Rotas de Usuario_sabore
-	Router::connect('/usuario_sabore/cadastrar', array('controller' => 'UsuarioSabores', 'action' => 'cadastrar'));
-	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'find_list'));
-	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
-	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
-	Router::connect('/usuario_sabore/find_first', array('controller' => 'UsuarioSabores', 'action' => 'find_first'));
+	##Rotas de Usuario_clientes
+	Router::connect('/usuario_clientes/cadastrar', array('controller' => 'UsuarioClientes', 'action' => 'cadastrar'));
+	Router::connect('/usuario_clientes/list', array('controller' => 'UsuarioClientes', 'action' => 'find_list'));
+	Router::connect('/usuario_clientes/deletar', array('controller' => 'UsuarioClientes', 'action' => 'deletar'));
+	Router::connect('/usuario_clientes/editar', array('controller' => 'UsuarioClientes', 'action' => 'editar'));
+	Router::connect('/usuario_clientes/find_first', array('controller' => 'UsuarioClientes', 'action' => 'find_first'));
 
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
@@ -82,7 +82,7 @@
 	Router::connect('/pedidos/em-andamento', array('controller' => 'pedidos', 'action' => 'in_progress'));
 	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
 	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
-
+	Router::connect('/pedidos/listardetalhes', array('controller' => 'pedidos', 'action' => 'listar_detalhes'));
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));
 	Router::connect('/categoria/editar', array('controller' => 'categorias', 'action' => 'edit'));
