@@ -178,17 +178,32 @@ class ClientesController extends AppController {
 		$this->EncodeReturn();		
 	}
 
-	public function read()
+
+	public function read() 
 	{
-		$clientes = array();
-
 		$this->loadModel('Usuario');
-		$clientes = $this->Usuario->find('all');
+		$clientes = array();
+		if(empty($this->request->data['search']))
+		{
+			$clientes = $this->Usuario->find('all');
+		}
+		else
+		{
+			$clientes = $this->Usuario->find('all', 
+				array('conditions' => array(						
+				'OR' => array(
+					'Usuario.nome LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.telefone LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.email LIKE ' => "%{$this->request->data['search']}%"
+					)
+				)
+			)
+			);
+		}
 
-		$this->DadosArray = $clientes;
-		$this->EncodeReturn();
-
-	}
+	$this->DadosArray = $clientes;
+	$this->EncodeReturn();
+}
 
 
 	##funcao para buscar cep

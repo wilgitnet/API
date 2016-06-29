@@ -32,23 +32,59 @@ class PedidosController extends AppController {
  * @param string $id
  * @return void
  */
-	
-	public function listar()
-	{
-		
-		$pedido = array();
 
-		$this->Pedido->unbindModel(array());				
-		##monta array que verifica se já existe uma categoria cadastrada no sistema
+
+public function listar() 
+{
+	$pedido = array();
+
+	$this->Pedido->unbindModel(array('belongsTo' => array('Situacao')));				
+
+	if(empty($this->request->data['search']))
+	{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
 		$pedido = $this->Pedido->find('all', array(
 			'conditions' => array(
-					'Pedido.cliente_id' => $this->request->data['cliente_id'],
-					'Pedido.situacao_pedido_id'=> '7'
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],
+				'Pedido.situacao_pedido_id'=> '7'
 				)
-		));
-		$this->DadosArray = $pedido;
-		$this->EncodeReturn();
+			));
 	}
+	else
+	{
+		$pedido = $this->Pedido->find('all', 
+
+			array('conditions' => array(
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],
+				'Pedido.situacao_pedido_id'=> '7',							
+				'OR' => array(
+					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
+					'FormaPagamento.descricao LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.nome LIKE ' => "%{$this->request->data['search']}%",
+					'Pedido.id LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.email LIKE ' => "%{$this->request->data['search']}%"
+					)
+				)
+			)
+			);				
+	}
+
+
+
+	$this->DadosArray = $pedido;
+	$this->EncodeReturn();
+}
+
+
+
+
+
+
+
+
+
+
+
 
 	public function in_progress()
 	{

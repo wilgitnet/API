@@ -564,23 +564,45 @@ class ProdutosController extends AppController {
 		$this->set('produto', $this->Produto->find('first', $options));
 	}
 
-
-	public function find_list()
+		public function find_list() 
 	{
 		$produtos = array();
 
 		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));				
-		##monta array que verifica se já existe uma categoria cadastrada no sistema
-		$produtos = $this->Produto->find('all', 
+
+		if(empty($this->request->data['search']))
+		{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
+			$produtos = $this->Produto->find('all', 
+
 				array('conditions' => array(							
 							 $this->request->data['cliente_id'],
 						)
 					)
 			);
+		}
+		else
+		{
+			$produtos = $this->Produto->find('all', 
+
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+							 'OR' => array(
+							 		'Produto.nome LIKE ' => "%{$this->request->data['search']}%",
+							 		'Produto.valor LIKE ' => "%{$this->request->data['search']}%",
+							 		'Categoria.nome LIKE ' => "%{$this->request->data['search']}%",
+							 	)
+						)
+					)
+			);				
+		}
+
+		
 
 		$this->DadosArray = $produtos;
 		$this->EncodeReturn();
 	}
+
 	public function find_cat()
 	{
 		$categorias = array();
