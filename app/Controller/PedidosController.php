@@ -10,7 +10,7 @@ class PedidosController extends AppController {
 
 /**
  * Components
- *
+ * 
  * @var array
  */
 	public $components = array('Paginator');
@@ -32,13 +32,7 @@ class PedidosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function list($id = null) {
-		if (!$this->Pedido->exists($id)) {
-			throw new NotFoundException(__('Invalid pedido'));
-		}
-		$options = array('conditions' => array('Pedido.' . $this->Pedido->primaryKey => $id));
-		$this->set('pedido', $this->Pedido->find('first', $options));
-	}
+	
 	public function listar()
 	{
 		
@@ -46,16 +40,82 @@ class PedidosController extends AppController {
 
 		$this->Pedido->unbindModel(array());				
 		##monta array que verifica se já existe uma categoria cadastrada no sistema
-		$pedido = $this->Pedido->find('all', 
-				array(							
-					$this->request->data['cliente_id'],
-					)
-			);
-
-
+		$pedido = $this->Pedido->find('all', array(
+			'conditions' => array(
+					'Pedido.cliente_id' => $this->request->data['cliente_id'],
+					'Pedido.situacao_pedido_id'=> '7'
+				)
+		));
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
+
+	public function in_progress()
+	{
+		
+		$pedido = array();
+
+		$this->Pedido->unbindModel(array());				
+		##monta array que verifica se já existe uma categoria cadastrada no sistema
+		$pedidos = $this->Pedido->find('all', array(
+			'conditions' => array(
+					'Pedido.cliente_id' => $this->request->data['cliente_id'],
+					'Pedido.situacao_pedido_id <>'=> '6',
+					'Pedido.situacao_pedido_id <>'=> '7',
+					'Pedido.situacao_pedido_id <>'=> '8'
+				)
+		));
+
+
+		$this->DadosArray = $pedidos;
+		$this->EncodeReturn();
+	}
+
+
+	public function view_request(){
+
+		$pedido = array();
+
+		$pedido = $this->Pedido->find('first', array(
+			'conditions' => array(
+					'Pedido.id' => $this->request->data['id']
+				)
+		));
+
+		if(!empty($pedido['PedidoProduto']))
+		{
+			$this->loadModel('Produto');
+			$i = 0;
+
+			foreach($pedido['PedidoProduto'] as $row)
+			{								
+				$produto = $this->Produto->find('first', array(
+					'conditions' => array(
+							'Produto.id' => $row['produto_id']
+						)
+				));
+				
+				$pedido['PedidoProduto'][$i]['dados_produto'] = $produto;
+				$i++;
+			}			
+
+		}
+		
+		$this->DadosArray = $pedido;
+		$this->EncodeReturn();
+	}
+
+
+	public function situation()
+	{
+		$situacao = array();
+		$this->loadModel('SituacaoPedido');
+		$this->SituacaoPedido->unbindModel(array('belongsTo' => array('Pedido')));
+		$situacao = $this->SituacaoPedido->find('all');
+		$this->DadosArray = $situacao;
+		$this->EncodeReturn();
+	}
+
 	public function listar_detalhes()
 	{
 		
@@ -68,9 +128,29 @@ class PedidosController extends AppController {
 					'Pedido.id' => $this->request->data['id']
 				)
 		));
+		if(!empty($pedido['PedidoProduto']))
+		{
+			$this->loadModel('Produto');
+			$i = 0;
+			
+			foreach($pedido['PedidoProduto'] as $row)
+			{				
+				$produto = $this->Produto->find('first', array(
+					'conditions' => array(
+							'Produto.id' => $row['produto_id']
+						)
+				));
+				
+				$pedido['PedidoProduto'][$i]['dados_produto'] = $produto;
+				$i++;
+			}			
+
+		}
+		
 		$this->DadosArray = $pedido;
 		$this->EncodeReturn();
 	}
+
 	public function find()
 	{		
 		if(empty($this->request->data['id_pedido']) || empty($_POST['id_usuario']))
@@ -320,4 +400,6 @@ class PedidosController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+
+
 }

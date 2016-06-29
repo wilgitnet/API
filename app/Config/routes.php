@@ -25,7 +25,7 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)... 
  */
-	
+	 
 
 	##rotas de cliente
 	Router::connect('/cliente/dominio', array('controller' => 'clientes', 'action' => 'find_dominio'));
@@ -41,19 +41,19 @@
 	Router::connect('/cliente/banner-buscar', array('controller' => 'clientes', 'action' => 'banner_find'));
 	Router::connect('/cliente/banner-editar', array('controller' => 'clientes', 'action' => 'banner_edit'));
 
-	##rotas de usuario
+	##rotas de usuario 
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));
 	Router::connect('/usuario/editar', array('controller' => 'usuarios', 'action' => 'edit'));
 	Router::connect('/usuario/login', array('controller' => 'usuarios', 'action' => 'login'));
 	Router::connect('/usuario/novasenha_token', array('controller' => 'usuarios', 'action' => 'password_token'));
 	Router::connect('/usuario/troca_senha', array('controller' => 'usuarios', 'action' => 'new_password'));
 
-	##Rotas de Usuario_sabore
-	Router::connect('/usuario_sabore/cadastrar', array('controller' => 'UsuarioSabores', 'action' => 'cadastrar'));
-	Router::connect('/usuario_sabore/list', array('controller' => 'UsuarioSabores', 'action' => 'find_list'));
-	Router::connect('/usuario_sabore/deletar', array('controller' => 'UsuarioSabores', 'action' => 'deletar'));
-	Router::connect('/usuario_sabore/editar', array('controller' => 'UsuarioSabores', 'action' => 'editar'));
-	Router::connect('/usuario_sabore/find_first', array('controller' => 'UsuarioSabores', 'action' => 'find_first'));
+	##Rotas de Usuario_clientes
+	Router::connect('/usuario_clientes/cadastrar', array('controller' => 'UsuarioClientes', 'action' => 'cadastrar'));
+	Router::connect('/usuario_clientes/list', array('controller' => 'UsuarioClientes', 'action' => 'find_list'));
+	Router::connect('/usuario_clientes/deletar', array('controller' => 'UsuarioClientes', 'action' => 'deletar'));
+	Router::connect('/usuario_clientes/editar', array('controller' => 'UsuarioClientes', 'action' => 'editar'));
+	Router::connect('/usuario_clientes/find_first', array('controller' => 'UsuarioClientes', 'action' => 'find_first'));
 
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
@@ -71,7 +71,7 @@
 	Router::connect('/produtos/remover', array('controller' => 'produtos', 'action' => 'remove'));
 	Router::connect('/produtos/editar', array('controller' => 'produtos', 'action' => 'editar'));
 	Router::connect('/produtos/search', array('controller' => 'produtos', 'action' => 'find_first'));
-
+	Router::connect('/produtos/find_cat', array('controller' => 'produtos', 'action' => 'find_cat'));
 
 	##pedidos
 	Router::connect('/pedidos/finalizar', array('controller' => 'pedidos', 'action' => 'add'));
@@ -79,6 +79,11 @@
 	Router::connect('/pedidos/acompanhamento', array('controller' => 'pedidos', 'action' => 'accompaniment'));
 	Router::connect('/pedidos/buscar', array('controller' => 'pedidos', 'action' => 'search'));
 	Router::connect('/pedidos/listar', array('controller' => 'pedidos', 'action' => 'listar'));
+	Router::connect('/pedidos/em-andamento', array('controller' => 'pedidos', 'action' => 'in_progress'));
+	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
+	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
+	Router::connect('/pedidos/situacao', array('controller' => 'pedidos', 'action' => 'situation'));
+	Router::connect('/pedidos/listardetalhes', array('controller' => 'pedidos', 'action' => 'listar_detalhes'));
 
 	##categorias
 	Router::connect('/categoria/cadastrar', array('controller' => 'categorias', 'action' => 'add'));
@@ -90,7 +95,7 @@
 
 	##clientes
 	Router::connect('/clientes/listar', array('controller' => 'clientes', 'action' => 'read'));
-
+	Router::connect('/clientes/deletando', array('controller' => 'clientes', 'action' => 'deletar'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

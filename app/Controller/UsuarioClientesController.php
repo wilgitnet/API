@@ -32,77 +32,147 @@ class UsuarioClientesController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
-		if (!$this->UsuarioCliente->exists($id)) {
-			throw new NotFoundException(__('Invalid usuario cliente'));
-		}
-		$options = array('conditions' => array('UsuarioCliente.' . $this->UsuarioCliente->primaryKey => $id));
-		$this->set('usuarioCliente', $this->UsuarioCliente->find('first', $options));
-	}
 
 /**
- * add method
+ * view method
  *
+ * @throws NotFoundException
+ * @param string $id
  * @return void
  */
-	public function add() {
-		if ($this->request->is('post')) {
+	public function cadastrar() {		
+		if ($this->request->is('post')) 
+		{			
+			unset($this->request->data['TokenRequest']);			
+			$POST = array('UsuarioCliente'=>$this->request->data);			
 			$this->UsuarioCliente->create();
-			if ($this->UsuarioCliente->save($this->request->data)) {
-				$this->Flash->success(__('The usuario cliente has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The usuario cliente could not be saved. Please, try again.'));
+
+			if ($this->UsuarioCliente->save($POST)) 
+			{
+				$this->Message = 'Usuario cadastrado com sucesso';
+				$this->Return = true;
+			} 
+			else 
+			{	
+				$this->Message = 'Ocorreu um Erro no seu cadastro de Usuario';								
+				$this->Return = false;
 			}
 		}
-		$clientes = $this->UsuarioCliente->Cliente->find('list');
-		$this->set(compact('clientes'));
+
+		$this->EncodeReturn();	
+	}
+	public function find_first()
+	{
+		$usuariocliente = array();
+
+		$this->UsuarioCliente->unbindModel(array('belongsTo' => array('Cliente')));				
+		##se não foi enviado id retorna erro
+		if(empty($this->request->data['id']))
+		{
+			$this->Message = 'ID de usuario não foi informado';
+			$this->Return = false;
+			$this->EncodeReturn();
+		}
+
+		$usuariocliente = $this->UsuarioCliente->find('first', array(
+			'conditions' => array(
+					'UsuarioCliente.id' => $this->request->data['id']
+				)
+		));
+
+		$this->DadosArray = $usuariocliente;
+		$this->EncodeReturn();
 	}
 
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		if (!$this->UsuarioCliente->exists($id)) {
-			throw new NotFoundException(__('Invalid usuario cliente'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->UsuarioCliente->save($this->request->data)) {
-				$this->Flash->success(__('The usuario cliente has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The usuario cliente could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('UsuarioCliente.' . $this->UsuarioCliente->primaryKey => $id));
-			$this->request->data = $this->UsuarioCliente->find('first', $options);
-		}
-		$clientes = $this->UsuarioCliente->Cliente->find('list');
-		$this->set(compact('clientes'));
-	}
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		$this->UsuarioCliente->id = $id;
-		if (!$this->UsuarioCliente->exists()) {
-			throw new NotFoundException(__('Invalid usuario cliente'));
+	public function find_list() 
+	{
+		$usuariocliente = array();
+
+		$this->UsuarioCliente->unbindModel(array('belongsTo' => array('Cliente')));				
+
+		if(empty($this->request->data['search']))
+		{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
+			$usuariocliente = $this->UsuarioCliente->find('all', 
+
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+						)
+					)
+			);
 		}
+		else
+		{
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
+			$usuariocliente = $this->UsuarioCliente->find('all', 
+
+				array('conditions' => array(							
+							 $this->request->data['cliente_id'],
+							 'OR' => array(
+							 		'UsuarioCliente.nome LIKE ' => "%{$this->request->data['search']}%",
+							 		'UsuarioCliente.login LIKE ' => "%{$this->request->data['search']}%",
+							 		'UsuarioCliente.email LIKE ' => "%{$this->request->data['search']}%"
+							 	)
+						)
+					)
+			);				
+		}
+
+		
+
+		$this->DadosArray = $usuariocliente;
+		$this->EncodeReturn();
+	}
+	
+	public function deletar() {
+
+		$this->UsuarioCliente->id = $this->request->data['id'];
+
+		##verifica se categoria existe
+		if (!$this->UsuarioCliente->exists()) 
+		{
+			$this->Message = 'Usuario não existe';
+			$this->Return = false;
+		}
+
 		$this->request->allowMethod('post', 'delete');
-		if ($this->UsuarioCliente->delete()) {
-			$this->Flash->success(__('The usuario cliente has been deleted.'));
-		} else {
-			$this->Flash->error(__('The usuario cliente could not be deleted. Please, try again.'));
+
+		##faz o delete
+		if ($this->UsuarioCliente->delete()) 
+		{
+			$this->Message = 'Usuário excluido com sucesso';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do usuario';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
+public function editar() {			
+
+			##variavel que vai receber os dados para enviar p/ banco de dados
+		$POST = array();
+
+			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);	
+
+		$POST = array('UsuarioCliente'=>$this->request->data);	
+		if ($this->UsuarioCliente->save($POST)) 
+		{
+			$this->Message = 'Usuario editado com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição de seu Usuario.';
+			$this->Return = false;	
 		}
-		return $this->redirect(array('action' => 'index'));
+
+		$this->EncodeReturn();	
 	}
 }

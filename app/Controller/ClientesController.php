@@ -98,7 +98,33 @@ class ClientesController extends AppController {
 		
 		$this->EncodeReturn();		
 	}
+	public function deletar() {
 
+		$this->Cliente->id = $this->request->data['id'];
+
+		##verifica se categoria existe
+		if (!$this->Cliente->exists()) 
+		{
+			$this->Message = 'Cliente não existe';
+			$this->Return = false;
+		}
+
+		$this->request->allowMethod('post', 'delete');
+
+		##faz o delete
+		if ($this->Cliente->delete()) 
+		{
+			$this->Message = 'Cliente excluido com sucesso';
+			$this->Return = true;
+		} 
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na exclusão do Cliente';
+			$this->Return = false;
+		}		
+
+		$this->EncodeReturn();
+	}
 	public function find_first()
 	{
 		$clientes = array();
@@ -286,12 +312,12 @@ class ClientesController extends AppController {
 
 			if ($this->Cliente->save($POST)) 
 			{
-				$this->Message = 'Textos cadastrados com sucesso';
+				$this->Message = 'Cadastrado de dados obteve sucesso';
 				$this->Return = true;
 			} 
 			else 
 			{	
-				$this->Message = 'Ocorreu um Erro no seu cadastro de texto';								
+				$this->Message = 'Ocorreu um Erro no cadastro de dados';								
 				$this->Return = false;
 			}
 		}
@@ -310,13 +336,13 @@ class ClientesController extends AppController {
 		$POST = array('Cliente'=>$this->request->data);	
 		if ($this->Cliente->save($POST)) 
 		{
-			$this->Message = 'Texto editado com sucesso';
+			$this->Message = 'Edição de dados obteve sucesso';
 			$this->Return = true;	
 		} 
 
 		else 
 		{
-			$this->Message = 'Ocorreu um erro na edição de seu Texto.';
+			$this->Message = 'Ocorreu um erro durante a edição de dados.';
 			$this->Return = false;	
 		}
 
