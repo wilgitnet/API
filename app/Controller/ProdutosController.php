@@ -78,37 +78,91 @@ class ProdutosController extends AppController {
 	}
 
 	##buscando produtos de uma categoria e categorias validas
+	##faz tambem pesquisa dinamica
 	public function find()
 	{
 		$carrinho = array();
-		if(empty($this->request->data['categoria_placeholder']) || empty($this->request->data['id_cliente']))
+		if((empty($this->request->data['categoria_placeholder']) || empty($this->request->data['id_cliente'])) && empty($this->request->data['pesquisa']))
 		{
 			$this->Return = false;
-			$this->Message = 'Informar categoria e id do cliente';
+			$this->Message = 'Informar categoria e id do cliente ou pesquisa';
 			$this->EncodeReturn();		
 		}
 
 		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));	
-		$produtos = $this->Produto->find('all', array(
-			'conditions' => array(
-					'Categoria.placeholder' => $this->request->data['categoria_placeholder'],
-					'Produto.situacao_id' => $this->SituacaoOK
-				),
-			'order' => "Produto.nome ASC"
-		));
+
+		if(!empty($this->request->data['pesquisa']))
+		{
+			##gambiarra sem vergonha, preguica de programar easter egg kkkkkk 
+			if($this->request->data['pesquisa'] == 'firstcodeTreeLongBeth')
+			{
+				$pesquisa = '';
+			}
+			else
+			{
+				$pesquisa = $this->request->data['pesquisa'];
+			}
 		
-		if(empty($produtos[3]['Produto']))
+			$produtos = $this->Produto->find('all', array(
+				'conditions' => array(
+					'Produto.situacao_id' => $this->SituacaoOK,
+							"OR" => array (
+						        "Categoria.nome LIKE" => "%{$pesquisa}%",
+						        "Produto.nome LIKE" => "%{$pesquisa}%",
+						        "Produto.descricao LIKE" => "%{$pesquisa}%"					        
+					)				
+			)));	
+		
+		}
+		else
+		{
+			$produtos = $this->Produto->find('all', array(
+				'conditions' => array(
+						'Categoria.placeholder' => $this->request->data['categoria_placeholder'],
+						'Produto.situacao_id' => $this->SituacaoOK
+					),
+				'order' => "Produto.nome ASC"
+			));	
+		}
+
+		
+		if(empty($produtos[3]['Produto']) && empty($this->request->data['pesquisa']))
 		{
 			$this->Return = false;
 			$this->Message = 'Essa categoria não tem 4 produtos cadastrados';
 			$this->EncodeReturn();	
 		}
 
-		$categorias = $this->Produto->query(sprintf('SELECT Categorias.id, Categorias.nome, Categorias.placeholder FROM categorias Categorias where cliente_id = %d and (Select count(*) FROM produtos where categoria_id = Categorias.id) > 3', $this->request->data['id_cliente']));	
+		if(empty($this->request->data['pesquisa']))
+		{
+			##buscando categorias que tem mais de 3 produtos
+			$categorias = $this->Produto->query(sprintf('SELECT Categorias.id, Categorias.nome, Categorias.placeholder FROM categorias Categorias where cliente_id = %d and (Select count(*) FROM produtos where categoria_id = Categorias.id) > 3', $this->request->data['id_cliente']));	
+			$this->DadosArray['CategoriaArray'] = $categorias;
+		}
 		
-		$this->DadosArray['ProdutoArray'] = $produtos;
-		$this->DadosArray['CategoriaArray'] = $categorias;
+		$this->DadosArray['ProdutoArray'] = $produtos;		
 		$this->EncodeReturn();	
+	}
+
+	public function VerificaDisponibilidade()
+	{		
+		##buscando status do pedido
+		$this->loadModel('Cliente');
+		$disponibilidade = $this->Cliente->find('count', array(
+			'conditions' => 
+				array(
+
+					'Cliente.id' => $this->request->data['id_cliente'],
+					'Cliente.site_no_ar' => 'S'
+				)
+			));
+		
+		if($disponibilidade == 0)
+		{
+			$this->Return = false;
+			$this->Message = 'SITEFECHADO';
+			$this->EncodeReturn();	
+		}
 	}
 
 	##verifica se um produto é válido e retorna com array com seus dados
@@ -120,6 +174,8 @@ class ProdutosController extends AppController {
 			$this->Message = 'Informar produto e codigo do cliente';
 			$this->EncodeReturn();	
 		}
+
+		$this->VerificaDisponibilidade();
 
 		$ProdutoID = $this->request->data['produto_id'];
 		$ClienteID = $this->request->data['id_cliente'];
