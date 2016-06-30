@@ -75,38 +75,44 @@ public function listar()
 	$this->EncodeReturn();
 }
 
+public function in_progress()
+{
+	$pedidos = array();
+	$this->Pedido->unbindModel(array('belongsTo' => array('')));				
 
-
-
-
-
-
-
-
-
-
-
-	public function in_progress()
+	if(empty($this->request->data['search']))
 	{
-		
-		$pedido = array();
-
-		$this->Pedido->unbindModel(array());				
-		##monta array que verifica se já existe uma categoria cadastrada no sistema
+			##monta array que verifica se já existe uma categoria cadastrada no sistema
 		$pedidos = $this->Pedido->find('all', array(
 			'conditions' => array(
-					'Pedido.cliente_id' => $this->request->data['cliente_id'],
-					'Pedido.situacao_pedido_id <>'=> '6',
-					'Pedido.situacao_pedido_id <>'=> '7',
-					'Pedido.situacao_pedido_id <>'=> '8'
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],
+				'Pedido.situacao_pedido_id <>'=> '6',
+				'Pedido.situacao_pedido_id <>'=> '8',
+				'Pedido.situacao_pedido_id <>'=> '7'
 				)
-		));
-
-
-		$this->DadosArray = $pedidos;
-		$this->EncodeReturn();
+			));
 	}
-
+	else
+	{
+		$pedidos = $this->Pedido->find('all', 
+			array('conditions' => array(
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],
+				'Pedido.situacao_pedido_id <>'=> '6',
+				'Pedido.situacao_pedido_id <>'=> '7',
+				'Pedido.situacao_pedido_id <>'=> '8',							
+				'OR' => array(
+					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
+					'SituacaoPedido.descricao LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.nome LIKE ' => "%{$this->request->data['search']}%",
+					'Usuario.email LIKE ' => "%{$this->request->data['search']}%"
+					)
+				)
+			)
+			);			
+	}
+	$this->DadosArray = $pedidos;
+	$this->EncodeReturn();
+}
 
 	public function view_request(){
 
