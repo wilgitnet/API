@@ -46,7 +46,7 @@ public function listar()
 		$pedido = $this->Pedido->find('all', array(
 			'conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id'=> '7'
+				'Pedido.situacao_pedido_id <> '=> array('1', '2', '3', '4', '5')
 				)
 			));
 	}
@@ -56,7 +56,7 @@ public function listar()
 
 			array('conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id'=> '7',							
+				'Pedido.situacao_pedido_id <> '=> array('1', '2', '3', '4', '5'),
 				'OR' => array(
 					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
 					'FormaPagamento.descricao LIKE ' => "%{$this->request->data['search']}%",
@@ -86,9 +86,7 @@ public function in_progress()
 		$pedidos = $this->Pedido->find('all', array(
 			'conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id <>'=> '6',
-				'Pedido.situacao_pedido_id <>'=> '8',
-				'Pedido.situacao_pedido_id <>'=> '7'
+				'Pedido.situacao_pedido_id <> '=> array('6', '7', '8')					
 				)
 			));
 	}
@@ -97,9 +95,7 @@ public function in_progress()
 		$pedidos = $this->Pedido->find('all', 
 			array('conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id <>'=> '6',
-				'Pedido.situacao_pedido_id <>'=> '7',
-				'Pedido.situacao_pedido_id <>'=> '8',							
+				'Pedido.situacao_pedido_id <> '=> array('6', '7', '8'),						
 				'OR' => array(
 					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
 					'SituacaoPedido.descricao LIKE ' => "%{$this->request->data['search']}%",
