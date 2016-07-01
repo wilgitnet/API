@@ -20,6 +20,7 @@ class AppController extends Controller
 	public $SituacaoOK 		= 1;
 	public $MessageArray 	= array();
 	public $percentual 		= 3;
+	public $DIRUPLOAD       = 'http://localhost/templateadmclientesabore/pages/imagens/';
 
 	public function beforeFilter() 
 	{

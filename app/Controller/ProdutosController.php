@@ -648,6 +648,19 @@ class ProdutosController extends AppController {
 		if ($this->request->is('post')) 
 		{			
 			unset($this->request->data['TokenRequest']);			
+			
+			if(!empty($this->request->data['img']))
+			{
+				if($this->request->data['img'] == 'NAOMANDOU')
+				{					
+					$this->request->data['img'] = $this->DIRUPLOAD.'img.jpg';
+				}
+				else
+				{
+					$this->request->data['img'] = $this->DIRUPLOAD.$this->request->data['img'];	
+				}				
+			}			
+
 			$POST = array('Produto'=>$this->request->data);			
 			$this->Produto->create();
 
