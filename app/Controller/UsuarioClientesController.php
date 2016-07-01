@@ -61,6 +61,50 @@ class UsuarioClientesController extends AppController {
 
 		$this->EncodeReturn();	
 	}
+
+	public function login()
+	{		
+
+		if(empty($this->request->data['usuario']) || empty($this->request->data['senha']))
+		{
+			$this->Message = 'Informar login e senha para realizar login';	
+			$this->Return = false;
+			$this->EncodeReturn();						
+		}
+		
+		$EmailSearch = $this->UsuarioCliente->find('first', array(
+		    'conditions' => array(		        
+		        'UsuarioCliente.email' => $this->request->data['usuario']		        
+		    ),
+		    'limit' => 1,
+		    'fields' => array('email')
+		));		
+		
+		$password = $this->request->data['senha'];
+		$email = $this->request->data['usuario'];
+
+		if(!empty($EmailSearch['UsuarioCliente']['email']))
+			$email = $EmailSearch['UsuarioCliente']['email'];
+
+		$login = $this->UsuarioCliente->find('first', array(
+			'conditions' => array(
+				'UsuarioCliente.email' => $email,
+				'UsuarioCliente.senha' => $password				
+			),
+			'limit' => 1
+		));
+
+		if(empty($login['UsuarioCliente']['id']))
+		{			
+			$this->Message = 'Usuario ou senha inválidos';	
+			$this->Return = false;
+			$this->EncodeReturn();
+		}	
+
+		$this->DadosArray = $login;
+		$this->EncodeReturn();
+	}
+
 	public function find_first()
 	{
 		$usuariocliente = array();

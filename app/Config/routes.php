@@ -54,7 +54,7 @@
 	Router::connect('/usuario_clientes/deletar', array('controller' => 'UsuarioClientes', 'action' => 'deletar'));
 	Router::connect('/usuario_clientes/editar', array('controller' => 'UsuarioClientes', 'action' => 'editar'));
 	Router::connect('/usuario_clientes/find_first', array('controller' => 'UsuarioClientes', 'action' => 'find_first'));
-
+	Router::connect('/usuario_clientes/login', array('controller' => 'UsuarioClientes', 'action' => 'login'));
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));
