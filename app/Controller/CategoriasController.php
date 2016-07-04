@@ -10,7 +10,7 @@ class CategoriasController extends AppController {
 
 /**
  * Components
- *
+ * 
  * @var array
  */
 	public $components = array('Paginator');

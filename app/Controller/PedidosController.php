@@ -86,9 +86,7 @@ public function in_progress()
 		$pedidos = $this->Pedido->find('all', array(
 			'conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id <>'=> '6',
-				'Pedido.situacao_pedido_id <>'=> '8',
-				'Pedido.situacao_pedido_id <>'=> '7'
+				'Pedido.situacao_pedido_id <> '=> array('8', '7', '6')
 				)
 			));
 	}
@@ -96,10 +94,8 @@ public function in_progress()
 	{
 		$pedidos = $this->Pedido->find('all', 
 			array('conditions' => array(
-				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id <>'=> '6',
-				'Pedido.situacao_pedido_id <>'=> '7',
-				'Pedido.situacao_pedido_id <>'=> '8',							
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],				
+				'Pedido.situacao_pedido_id <> '=> array('8', '7', '6'),							
 				'OR' => array(
 					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
 					'SituacaoPedido.descricao LIKE ' => "%{$this->request->data['search']}%",
@@ -442,6 +438,28 @@ public function in_progress()
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+
+	public function atualizar_status() {			
+
+		$POST = array();
+
+		unset($this->request->data['TokenRequest']);	
+		$POST = array('Pedido'=>$this->request->data);	
+		if ($this->Pedido->save($POST)) 
+		{
+			$this->Message = 'Pedido editada com sucesso';
+			$this->Return = true;	
+		} 
+
+		else 
+		{
+			$this->Message = 'Ocorreu um erro na edição do seu pedido.';
+			$this->Return = false;	
+		}
+
+		$this->EncodeReturn();	
+	}
+
 
 
 }
