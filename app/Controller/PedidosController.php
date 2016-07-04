@@ -46,7 +46,7 @@ public function listar()
 		$pedido = $this->Pedido->find('all', array(
 			'conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id'=> '7'
+				'Pedido.situacao_pedido_id <> '=> array('1', '2', '3', '4', '5')
 				)
 			));
 	}
@@ -56,7 +56,7 @@ public function listar()
 
 			array('conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id'=> '7',							
+				'Pedido.situacao_pedido_id <> '=> array('1', '2', '3', '4', '5'),
 				'OR' => array(
 					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
 					'FormaPagamento.descricao LIKE ' => "%{$this->request->data['search']}%",
@@ -78,15 +78,15 @@ public function listar()
 public function in_progress()
 {
 	$pedidos = array();
-	$this->Pedido->unbindModel(array('belongsTo' => array('')));				
+	$this->Pedido->unbindModel(array('belongsTo' => array('')));    
 
 	if(empty($this->request->data['search']))
 	{
-			##monta array que verifica se já existe uma categoria cadastrada no sistema
+   ##monta array que verifica se já existe uma categoria cadastrada no sistema
 		$pedidos = $this->Pedido->find('all', array(
 			'conditions' => array(
 				'Pedido.cliente_id' => $this->request->data['cliente_id'],
-				'Pedido.situacao_pedido_id <> '=> array('8', '7', '6')
+				'Pedido.situacao_pedido_id <> '=> array('6', '7', '8')     
 				)
 			));
 	}
@@ -94,8 +94,8 @@ public function in_progress()
 	{
 		$pedidos = $this->Pedido->find('all', 
 			array('conditions' => array(
-				'Pedido.cliente_id' => $this->request->data['cliente_id'],				
-				'Pedido.situacao_pedido_id <> '=> array('8', '7', '6'),							
+				'Pedido.cliente_id' => $this->request->data['cliente_id'],
+				'Pedido.situacao_pedido_id <> '=> array('6', '7', '8'),      
 				'OR' => array(
 					'Pedido.valor_total LIKE ' => "%{$this->request->data['search']}%",
 					'SituacaoPedido.descricao LIKE ' => "%{$this->request->data['search']}%",
@@ -104,7 +104,7 @@ public function in_progress()
 					)
 				)
 			)
-			);			
+			);   
 	}
 	$this->DadosArray = $pedidos;
 	$this->EncodeReturn();
