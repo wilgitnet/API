@@ -666,8 +666,9 @@ class ProdutosController extends AppController {
 
 			if ($this->Produto->save($POST)) 
 			{
-				$this->Message = 'Produto cadastrado com sucesso';
-				$this->Return = true;
+				$this->DadosArray['ID'] = $this->Produto->getLastInsertId();				
+				$this->Message 	= 'Produto cadastrado com sucesso';
+				$this->Return 	= true;
 			} 
 			else 
 			{	
@@ -679,40 +680,24 @@ class ProdutosController extends AppController {
 		$this->EncodeReturn();	
 	}
 
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		if (!$this->Produto->exists($id)) {
-			throw new NotFoundException(__('Invalid produto'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Produto->save($this->request->data)) {
-				$this->Flash->success(__('The produto has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Flash->error(__('The produto could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Produto.' . $this->Produto->primaryKey => $id));
-			$this->request->data = $this->Produto->find('first', $options);
-		}
-		$situacaos = $this->Produto->Situacao->find('list');
-		$classes = $this->Produto->Classe->find('list');
-		$this->set(compact('situacaos', 'classes'));
-	}
 
 	public function editar() {			
 
-			##variavel que vai receber os dados para enviar p/ banco de dados
+		##variavel que vai receber os dados para enviar p/ banco de dados
 		$POST = array();
 
-			##apagando indice de tokenrequest pois ele não existe na tabela de categorias
-		unset($this->request->data['TokenRequest']);	
+		if(!empty($this->request->data['img']))
+		{					
+			$this->request->data['img'] = $this->DIRUPLOAD.$this->request->data['img'];			
+		}
+		else
+		{			
+			$imgAtual = $this->Produto->query(sprintf("Select img FROM produtos where id = %d", $this->request->data['id']));
+			$this->request->data['img'] = $imgAtual[0]['produtos']['img'];
+		}		
+
+		##apagando indice de tokenrequest pois ele não existe na tabela de categorias
+		unset($this->request->data['TokenRequest']);			
 
 		$POST = array('Produto'=>$this->request->data);	
 		if ($this->Produto->save($POST)) 
@@ -760,12 +745,23 @@ class ProdutosController extends AppController {
 
 		$this->Produto->id = $this->request->data['id'];
 
+		##verifica se tem pedidos realizados com esse produto
+		$ValidPedidoID = $this->Produto->query(sprintf("Select count(*) as count FROM pedido_produtos where produto_id = %d", $this->request->data['id']));
+		
+		if($ValidPedidoID[0][0]['count'] > 0)
+		{
+			$this->Message = 'Não é possível excluir esse produto pois já tem pedidos realizados. Você pode desabilitar para não ser visualizado no site';
+			$this->Return = false;	
+			$this->EncodeReturn();
+		}
+
 		##verifica se categoria existe
 		if (!$this->Produto->exists()) 
 		{
 			$this->Message = 'Produto não existe';
 			$this->Return = false;
-		}
+			$this->EncodeReturn();
+		}	
 
 		$this->request->allowMethod('post', 'delete');
 
@@ -776,7 +772,7 @@ class ProdutosController extends AppController {
 			$this->Return = true;
 		} 
 		else 
-		{
+		{		
 			$this->Message = 'Ocorreu um erro na exclusão do produto';
 			$this->Return = false;
 		}		

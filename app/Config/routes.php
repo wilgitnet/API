@@ -39,7 +39,9 @@
 	Router::connect('/cliente/banner-cadastrar', array('controller' => 'clientes', 'action' => 'banner_add'));
 	Router::connect('/cliente/banner-deletar', array('controller' => 'clientes', 'action' => 'banner_delete'));
 	Router::connect('/cliente/banner-buscar', array('controller' => 'clientes', 'action' => 'banner_find'));
+	Router::connect('/cliente/banner-buscar-img', array('controller' => 'clientes', 'action' => 'banner_find_img'));
 	Router::connect('/cliente/banner-editar', array('controller' => 'clientes', 'action' => 'banner_edit'));
+	Router::connect('/cliente/banner-img-editar', array('controller' => 'clientes', 'action' => 'banner_img_edit'));
 
 	##rotas de usuario 
 	Router::connect('/usuario/salvar', array('controller' => 'usuarios', 'action' => 'add'));

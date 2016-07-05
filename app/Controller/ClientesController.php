@@ -458,11 +458,11 @@ class ClientesController extends AppController {
  * @return void
  */
 
-	public function banner_list(){
-
+	public function banner_list(){		
 		$banners = array();
 		$this->loadModel('ClienteBanner');
-		$banners = $this->ClienteBanner->find('all');
+		$banners = $this->ClienteBanner->find('all', 
+				array('conditions'=>array('ClienteBanner.id_cliente'=>$this->request->data['cliente_id'])));
 
 		$this->DadosArray = $banners;
 		$this->EncodeReturn();
@@ -472,19 +472,43 @@ class ClientesController extends AppController {
 	public function banner_find(){
 
 		$banner = array();
-
 		$this->loadModel('ClienteBanner');
 		$banner = $this->ClienteBanner->find('first', array(
 			'conditions' => array(
 					'ClienteBanner.id' => $this->request->data['id']
 				)
 		));
+		
+		##buscando imagem do banner
+		$IMGBANNER = $this->ClienteBanner->query(sprintf("Select banner1 FROM clientes where id = %d", $this->request->data['cliente_id'])); 
 
 		$this->DadosArray = $banner;
+		$this->DadosArray['img_banner'] = $IMGBANNER[0]['clientes']['banner1'];
 		$this->EncodeReturn();
 	}
 
+	public function banner_img_edit()
+	{
+		if(!empty($this->request->data['banner1']) && !empty($this->request->data['cliente_id']))
+		{	
+			$this->request->data['banner1'] = $this->DIRUPLOAD.$this->request->data['banner1'];	
 
+			$update = $this->Cliente->query(sprintf("Update clientes set banner1 ='%s' WHERE id = %d", $this->request->data['banner1'], $this->request->data['cliente_id']));	
+			
+			$this->EncodeReturn();		
+		}
+	}
+
+	public function banner_find_img()
+	{
+		if(!empty($this->request->data['cliente_id']))
+		{
+			##buscando imagem do banner
+			$IMGBANNER = $this->Cliente->query(sprintf("Select banner1 FROM clientes where id = %d", $this->request->data['cliente_id'])); 
+			$this->DadosArray['img_banner'] = $IMGBANNER[0]['clientes']['banner1'];
+			$this->EncodeReturn();		
+		}
+	}
 
 /**
  * update method
