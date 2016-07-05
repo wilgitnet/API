@@ -421,20 +421,29 @@ class ClientesController extends AppController {
 	public function banner_add(){
 
 		$POST = array();
-
 		
 		if ($this->request->is('post')) 
-		{							
-			
+		{										
 			unset($this->request->data['TokenRequest']);			
 
 			$this->loadModel('ClienteBanner');
 
+			##verifica quantos banners tem cadastrado 
+			$bannerQTD = $this->ClienteBanner->query(sprintf("Select count(*) as count FROM cliente_banners where id_cliente = %d", $this->request->data['id_cliente']));
+			
+			if($bannerQTD[0][0]['count'] > 4)
+			{
+				$this->Message = 'Não é possível cadastrar mais de 5 textos rotativos.';								
+				$this->Return = false;
+				$this->EncodeReturn();	
+			}
+			
 			$POST = array('ClienteBanner'=>$this->request->data);	
 
 			$this->ClienteBanner->create();	
 			if ($this->ClienteBanner->save($POST)) 
 			{
+				$this->DadosArray['ID'] = $this->ClienteBanner->getLastInsertId();				
 				$this->Message = 'Banner cadastrado com sucesso!';
 				$this->Return = true;
 			} 

@@ -309,7 +309,7 @@ public function in_progress()
 
 		##realizando primeiro insert de pedido
 		$POST = array('Pedido'=>array(
-					'data_pedido'=>date('Y/m/d h:i:s'),
+					'data_pedido'=>date('Y-m-d H:i:s'),
 					'usuario_id'=>$CartSession['usuario_id'],
 					'acompanhamento'=>'S',
 					'endereco'=>$CartSession['endereco']['endereco'],
