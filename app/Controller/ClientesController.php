@@ -185,13 +185,20 @@ class ClientesController extends AppController {
 		$clientes = array();
 		if(empty($this->request->data['search']))
 		{
-			$clientes = $this->Usuario->find('all');
+			$clientes = $this->Usuario->find('all', 
+				array ('conditions' => array (
+					'Usuario.cliente_id' => $this->request->data['cliente_id'],
+
+
+				)
+			));
 		}
 		else
 		{
 			$clientes = $this->Usuario->find('all', 
-				array('conditions' => array(						
+				array('conditions' => array(				
 				'OR' => array(
+
 					'Usuario.nome LIKE ' => "%{$this->request->data['search']}%",
 					'Usuario.telefone LIKE ' => "%{$this->request->data['search']}%",
 					'Usuario.email LIKE ' => "%{$this->request->data['search']}%"
@@ -484,6 +491,7 @@ class ClientesController extends AppController {
 		$this->loadModel('ClienteBanner');
 		$banner = $this->ClienteBanner->find('first', array(
 			'conditions' => array(
+					'ClienteBanner.cliente_id' => $this->request->data['cliente_id'],
 					'ClienteBanner.id' => $this->request->data['id']
 				)
 		));

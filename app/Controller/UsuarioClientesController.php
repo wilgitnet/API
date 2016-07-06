@@ -119,7 +119,9 @@ class UsuarioClientesController extends AppController {
 
 		$usuariocliente = $this->UsuarioCliente->find('first', array(
 			'conditions' => array(
+				'UsuarioCliente.cliente_id' => $this->request->data['cliente_id'],
 					'UsuarioCliente.id' => $this->request->data['id']
+
 				)
 		));
 
@@ -140,7 +142,7 @@ class UsuarioClientesController extends AppController {
 			$usuariocliente = $this->UsuarioCliente->find('all', 
 
 				array('conditions' => array(							
-							 $this->request->data['cliente_id'],
+							 'UsuarioCliente.cliente_id '=>$this->request->data['cliente_id'],
 						)
 					)
 			);

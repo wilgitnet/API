@@ -26,8 +26,9 @@ class ProdutosController extends AppController {
 		##realizar aqui busca por produtos em destaque
 		$this->Produto->unbindModel(array('belongsTo' => array('Categoria', 'Situacao')));				
 		$destaques = $this->Produto->find('all', array(			
-		    	'conditions' => array(		        
+		    	'conditions' => array(		       
 		        'Produto.categoria_id' => $this->request->data['categoria_id'],
+		        'Categoria.cliente_id'=>$this->request->data['cliente_id'],
 		        'Produto.destaque' => 'S',
 		        'Produto.situacao_id' => $this->SituacaoOK
 		    ),
@@ -119,6 +120,7 @@ class ProdutosController extends AppController {
 			$produtos = $this->Produto->find('all', array(
 				'conditions' => array(
 						'Categoria.placeholder' => $this->request->data['categoria_placeholder'],
+						'Categoria.cliente_id' => $this->request->data['cliente_id'], 
 						'Produto.situacao_id' => $this->SituacaoOK
 					),
 				'order' => "Produto.nome ASC"
@@ -576,7 +578,7 @@ class ProdutosController extends AppController {
 			$produtos = $this->Produto->find('all', 
 
 				array('conditions' => array(							
-							 $this->request->data['cliente_id'],
+						'Categoria.cliente_id'=>$this->request->data['cliente_id'],
 						)
 					)
 			);
@@ -586,7 +588,7 @@ class ProdutosController extends AppController {
 			$produtos = $this->Produto->find('all', 
 
 				array('conditions' => array(							
-							 $this->request->data['cliente_id'],
+							 'Categoria.cliente_id'=>$this->request->data['cliente_id'],
 							 'OR' => array(
 							 		'Produto.nome LIKE ' => "%{$this->request->data['search']}%",
 							 		'Produto.valor LIKE ' => "%{$this->request->data['search']}%",

@@ -74,6 +74,7 @@ class CategoriasController extends AppController {
 
 		$categoria = $this->Categoria->find('first', array(
 			'conditions' => array(
+					'Categoria.cliente_id'=> $this->request->data['cliente_id'],
 					'Categoria.id' => $this->request->data['id']
 				)
 		));
