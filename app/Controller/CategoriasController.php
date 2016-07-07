@@ -242,12 +242,6 @@ class CategoriasController extends AppController {
 			$this->Return = false;
 			$this->EncodeReturn();					
 		}
-		if($QtdeCategoriaPrincipal = 0)
-		{
-			$this->Message = 'Ops, você tem que ter uma categoria cadastrada no sistema como principal';
-			$this->Return = false;
-			$this->EncodeReturn();					
-		}
 	}
 
 }
