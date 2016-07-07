@@ -188,15 +188,14 @@ class ClientesController extends AppController {
 			$clientes = $this->Usuario->find('all', 
 				array ('conditions' => array (
 					'Usuario.cliente_id' => $this->request->data['cliente_id'],
-
-
 				)
 			));
 		}
 		else
 		{
 			$clientes = $this->Usuario->find('all', 
-				array('conditions' => array(				
+				array('conditions' => array(	
+				'Usuario.cliente_id' => $this->request->data['cliente_id'],			
 				'OR' => array(
 
 					'Usuario.nome LIKE ' => "%{$this->request->data['search']}%",
