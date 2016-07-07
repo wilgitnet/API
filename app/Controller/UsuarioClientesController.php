@@ -140,7 +140,6 @@ class UsuarioClientesController extends AppController {
 		{
 			##monta array que verifica se já existe uma categoria cadastrada no sistema
 			$usuariocliente = $this->UsuarioCliente->find('all', 
-
 				array('conditions' => array(							
 							 'UsuarioCliente.cliente_id '=>$this->request->data['cliente_id'],
 						)
@@ -153,7 +152,7 @@ class UsuarioClientesController extends AppController {
 			$usuariocliente = $this->UsuarioCliente->find('all', 
 
 				array('conditions' => array(							
-							 $this->request->data['cliente_id'],
+							 'UsuarioCliente.cliente_id '=>$this->request->data['cliente_id'],
 							 'OR' => array(
 							 		'UsuarioCliente.nome LIKE ' => "%{$this->request->data['search']}%",
 							 		'UsuarioCliente.login LIKE ' => "%{$this->request->data['search']}%",

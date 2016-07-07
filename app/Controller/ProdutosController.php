@@ -612,6 +612,7 @@ class ProdutosController extends AppController {
 		$this->Categoria->unbindModel(array('belongsTo' => array('Cliente','Situacao')));
 		$categorias = $this->Categoria->find('all', array(
 			'conditions' => array(
+					'Categoria.cliente_id' =>$this->request->data['cliente_id'],
 					'Categoria.situacao_id' => '1'
 				)
 		));
