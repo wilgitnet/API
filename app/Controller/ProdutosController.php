@@ -107,6 +107,7 @@ class ProdutosController extends AppController {
 			$produtos = $this->Produto->find('all', array(
 				'conditions' => array(
 					'Produto.situacao_id' => $this->SituacaoOK,
+					'Categoria.cliente_id' => $this->request->data['cliente_id'], 
 							"OR" => array (
 						        "Categoria.nome LIKE" => "%{$pesquisa}%",
 						        "Produto.nome LIKE" => "%{$pesquisa}%",
