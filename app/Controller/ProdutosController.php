@@ -24,7 +24,7 @@ class ProdutosController extends AppController {
 		}
 
 		##realizar aqui busca por produtos em destaque
-		$this->Produto->unbindModel(array('belongsTo' => array('Categoria', 'Situacao')));				
+		$this->Produto->unbindModel(array('belongsTo' => array('Situacao')));				
 		$destaques = $this->Produto->find('all', array(			
 		    	'conditions' => array(		       
 		        'Produto.categoria_id' => $this->request->data['categoria_id'],
@@ -83,7 +83,7 @@ class ProdutosController extends AppController {
 	public function find()
 	{
 		$carrinho = array();
-		if((empty($this->request->data['categoria_placeholder']) || empty($this->request->data['id_cliente'])) && empty($this->request->data['pesquisa']))
+		if((empty($this->request->data['categoria_placeholder']) || empty($this->request->data['cliente_id'])) && empty($this->request->data['pesquisa']))
 		{
 			$this->Return = false;
 			$this->Message = 'Informar categoria e id do cliente ou pesquisa';
@@ -138,7 +138,7 @@ class ProdutosController extends AppController {
 		if(empty($this->request->data['pesquisa']))
 		{
 			##buscando categorias que tem mais de 3 produtos
-			$categorias = $this->Produto->query(sprintf('SELECT Categorias.id, Categorias.nome, Categorias.placeholder FROM categorias Categorias where cliente_id = %d and (Select count(*) FROM produtos where categoria_id = Categorias.id) > 3', $this->request->data['id_cliente']));	
+			$categorias = $this->Produto->query(sprintf('SELECT Categorias.id, Categorias.nome, Categorias.placeholder FROM categorias Categorias where cliente_id = %d and (Select count(*) FROM produtos where categoria_id = Categorias.id) > 3', $this->request->data['cliente_id']));	
 			$this->DadosArray['CategoriaArray'] = $categorias;
 		}
 		
