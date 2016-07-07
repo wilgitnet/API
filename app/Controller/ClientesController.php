@@ -490,7 +490,6 @@ class ClientesController extends AppController {
 		$this->loadModel('ClienteBanner');
 		$banner = $this->ClienteBanner->find('first', array(
 			'conditions' => array(
-					'ClienteBanner.cliente_id' => $this->request->data['cliente_id'],
 					'ClienteBanner.id' => $this->request->data['id']
 				)
 		));
