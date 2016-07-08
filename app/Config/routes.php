@@ -85,6 +85,7 @@
 	Router::connect('/pedidos/mostrar', array('controller' => 'pedidos', 'action' => 'read'));
 	Router::connect('/pedidos/visualizar', array('controller' => 'pedidos', 'action' => 'view_request'));
 	Router::connect('/pedidos/situacao', array('controller' => 'pedidos', 'action' => 'situation'));
+	Router::connect('/pedidos/situacao-atualizar', array('controller' => 'pedidos', 'action' => 'situacao_atualizar'));
 	Router::connect('/pedidos/listardetalhes', array('controller' => 'pedidos', 'action' => 'listar_detalhes'));
 
 	##categorias

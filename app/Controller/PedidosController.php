@@ -109,6 +109,23 @@ public function in_progress()
 	$this->DadosArray = $pedidos;
 	$this->EncodeReturn();
 }
+public function situacao_atualizar(){			
+	$POST = array();	
+	$POST = array('Pedido'=>$this->request->data);	
+	if ($this->Pedido->save($POST)) 
+	{
+		$this->Message = 'Pedido atualizado com sucesso';
+		$this->Return = true;	
+	} 
+
+	else 
+	{
+		$this->Message = 'Ocorreu um erro na atualização do status.';
+		$this->Return = false;	
+	}
+
+	$this->EncodeReturn();	
+}
 
 	public function view_request(){
 
