@@ -110,8 +110,45 @@ public function in_progress()
 	$this->EncodeReturn();
 }
 public function situacao_atualizar(){			
+	$this->loadModel('Cliente');
 	$POST = array();	
-	$POST = array('Pedido'=>$this->request->data);	
+	$cliente = array();
+	$valortaxa = array();	
+	$ped_val = array();
+	$ped_low = '0.00';
+	$POST = array('Pedido'=>$this->request->data);
+
+	if ($this->request->data['situacao_pedido_id'] <> '8' and $this->request->data['situacao_pedido_id'] <> '1' and $this->request->data['situacao_pedido_id'] <> '2') 
+	{
+		//busca o pedido, e o cliente, pra pegar os créditos e pá 
+		$cliente = $this->Cliente->find('first', array(
+			'conditions' => array(
+				'Cliente.id' => $this->request->data['cliente_id'])));
+		$ped_val = $this->Pedido->find('first', array(
+			'conditions' => array(
+				'Pedido.id' => $this->request->data['id'])));
+
+		//Verifica se tem crédito disponível
+		if ($ped_val['Pedido']['valor_taxa'] <= $cliente['Cliente']['credito']) 
+		{
+	 		//Faz a subtração, do valor da taxa do pedido, com o Crédito que o cliente tem disponivel
+			$valortaxa = $cliente['Cliente']['credito'] - $ped_val['Pedido']['valor_taxa'];
+			$valortaxa2 = array ('credito' => $valortaxa, 'id'=>$cliente ['Cliente']['id'] );
+			$this->Cliente->save($valortaxa2);
+			//Faz a atualização dos créditos do cliente. EM CIMA 
+
+			//Aqui vamos tirar o Valor da taxa do pedido, para não somar todas as vezes que passar pelo código
+			$ped_low2 = array('valor_taxa' => $ped_low, 'id' => $ped_val['Pedido']['id'], 'cliente_id'=>$cliente['Cliente']['id']);
+			$this->Pedido->save($ped_low2);
+		}
+		else
+		{
+			$this->Message = 'Ocorreu um erro na atualização do status.';
+			$this->Return = false;	
+			$this->EncodeReturn();
+		}	
+
+	}	
 	if ($this->Pedido->save($POST)) 
 	{
 		$this->Message = 'Pedido atualizado com sucesso';
