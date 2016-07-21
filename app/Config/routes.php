@@ -57,6 +57,7 @@
 	Router::connect('/usuario_clientes/editar', array('controller' => 'UsuarioClientes', 'action' => 'editar'));
 	Router::connect('/usuario_clientes/find_first', array('controller' => 'UsuarioClientes', 'action' => 'find_first'));
 	Router::connect('/usuario_clientes/login', array('controller' => 'UsuarioClientes', 'action' => 'login'));
+	Router::connect('/usuario_clientes/valida_email', array('controller' => 'UsuarioClientes', 'action' => 'valida_email'));
 	##produtos
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));	
 	Router::connect('/produtos/home', array('controller' => 'produtos', 'action' => 'home'));

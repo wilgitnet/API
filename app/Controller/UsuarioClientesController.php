@@ -62,6 +62,48 @@ class UsuarioClientesController extends AppController {
 		$this->EncodeReturn();	
 	}
 
+
+	public function valida_email()
+	{
+		if (empty($this->request->data['email']) || empty($this->request->data['senha'] )) 
+		{
+			$this->Message = 'Informar email';	
+			$this->Return = false;
+			$this->EncodeReturn();
+
+		}
+		if ($EmailSearch = $this->UsuarioCliente->find('first', array(
+			'conditions' => array(		        
+				'UsuarioCliente.email' => $this->request->data['email']		        
+				),
+			'limit' => 1,
+			'fields' => array('email','senha','cliente_id','id','email')
+			)))
+		{
+			$newpass = $this->request->data['senha']; 
+			$idcli = $EmailSearch['UsuarioCliente']['id'];
+			$cliid = $EmailSearch['UsuarioCliente']['cliente_id'];
+			$dados = array ('id'=>$idcli, 'senha'=>$newpass, 'cliente_id' =>$cliid);
+			if ($this->UsuarioCliente->save($dados)) 
+			{
+				$this->Message = 'Sua senha foi alterada e enviada para seu email!';	
+				$this->Return = false;
+			} 
+			else 
+			{	
+				$this->Message = 'Ops, ocorreu um erro na mudança de senha!';	
+				$this->Return = false;
+			}
+		}
+		else 
+		{
+			$this->Message = 'Ops, parece que não encontramos seu email!';	
+			$this->Return = false;
+		}	
+		
+		$this->EncodeReturn();
+	}
+	
 	public function login()
 	{		
 
